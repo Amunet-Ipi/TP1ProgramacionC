@@ -1,0 +1,211 @@
+﻿using System;
+using System.Collections.Generic;
+
+namespace LigaDeportiva
+{
+    // ==========================================
+    // ESTRUCTURAS DE DATOS (TIPOS POR VALOR)
+    // ==========================================
+
+    /// <summary>
+    /// Representa la información de un equipo. 
+    /// Se utiliza una estructura (struct) para encapsular datos relacionados[cite: 3].
+    /// </summary>
+    struct Equipo
+    {
+        public string NombreClub;
+        public string NombreCompleto;
+        public int Categoria;
+        public int CantidadJugadores;
+    }
+
+    /// <summary>
+    /// Representa la información personal y deportiva de un jugador.
+    /// </summary>
+    struct Jugador
+    {
+        public int DNI;
+        public string Nombre;
+        public string Apellido;
+        public int Edad;
+        public string NombreEquipo;
+        public bool Seguro;
+        public bool Afiliacion;
+    }
+
+    class Program
+    {
+        // ==========================================
+        // ALMACENAMIENTO GLOBAL
+        // ==========================================
+
+        static List<Equipo> listaEquipos = new List<Equipo>();
+        static List<Jugador> listaJugadores = new List<Jugador>();
+
+        // ==========================================
+        // PUNTO DE ENTRADA
+        // ==========================================
+
+        /// <summary>
+        /// Punto de entrada de la aplicación.
+        /// Mantenido intencionalmente corto para delegar el control al menú principal.
+        /// </summary>
+        static void Main(string[] args)
+        {
+            MostrarBienvenida();
+            EjecutarMenuPrincipal();
+        }
+
+        // ==========================================
+        // MÓDULOS DE INTERFAZ Y CONTROL DE FLUJO
+        // ==========================================
+
+        /// <summary>
+        /// Muestra un encabezado inicial al abrir el sistema.
+        /// </summary>
+        static void MostrarBienvenida()
+        {
+            Console.Clear();
+            Console.WriteLine("========================================");
+            Console.WriteLine("   SISTEMA DE GESTIÓN - LIGA DEPORTIVA  ");
+            Console.WriteLine("========================================");
+            Console.WriteLine("\nPresione cualquier tecla para comenzar...");
+            Console.ReadKey();
+        }
+
+        /// <summary>
+        /// Controla el ciclo de vida del programa y las opciones del usuario.
+        /// Utiliza una estructura de iteración 'do-while'[cite: 1].
+        /// </summary>
+        static void EjecutarMenuPrincipal()
+        {
+            int opcion;
+            do
+            {
+                Console.Clear();
+                Console.WriteLine("--- MENÚ PRINCIPAL ---");
+                Console.WriteLine("1. Alta de Equipo");
+                Console.WriteLine("2. Alta de Jugador");
+                Console.WriteLine("3. Control de Aptitud (Listar Asegurados)");
+                Console.WriteLine("4. Reportes Estadísticos (Edades y Categorías)");
+                Console.WriteLine("0. Salir");
+                Console.Write("\nSeleccione una opción: ");
+
+                if (int.TryParse(Console.ReadLine(), out opcion))
+                {
+                    ProcesarOpcion(opcion);
+                }
+                else
+                {
+                    MostrarError("Entrada inválida. Ingrese un número.");
+                }
+
+            } while (opcion != 0);
+        }
+
+        /// <summary>
+        /// Redirige el flujo del programa según la opción seleccionada.
+        /// Utiliza una instrucción de selección 'switch'[cite: 1].
+        /// </summary>
+        static void ProcesarOpcion(int opcion)
+        {
+            switch (opcion)
+            {
+                case 1:
+                    ModuloEquipos_Alta();
+                    break;
+                case 2:
+                    ModuloJugadores_Alta();
+                    break;
+                case 3:
+                    ModuloReportes_Asegurados();
+                    break;
+                case 4:
+                    ModuloReportes_Estadisticas();
+                    break;
+                case 0:
+                    Console.WriteLine("\nSaliendo del sistema...");
+                    break;
+                default:
+                    MostrarError("Opción no contemplada en el menú.");
+                    break;
+            }
+        }
+
+        // ==========================================
+        // MÓDULOS DE LÓGICA DE NEGOCIO (ABM)
+        // ==========================================
+
+        /// <summary>
+        /// Maneja la creación de un nuevo equipo y su asignación de categoría.
+        /// </summary>
+        static void ModuloEquipos_Alta()
+        {
+            Console.Clear();
+            Console.WriteLine("--- NUEVO EQUIPO ---");
+            // Aquí irá toda la lógica de alta de equipos (pedir datos, validar, guardar)
+
+            PausarYContinuar("Equipo registrado exitosamente (Simulado).");
+        }
+
+        /// <summary>
+        /// Maneja la creación de un nuevo jugador y las validaciones de edad/equipo.
+        /// </summary>
+        static void ModuloJugadores_Alta()
+        {
+            Console.Clear();
+            Console.WriteLine("--- NUEVO JUGADOR ---");
+            // Aquí irá toda la lógica de alta de jugadores (pedir DNI, validar duplicados, etc.)
+
+            PausarYContinuar("Jugador registrado exitosamente (Simulado).");
+        }
+
+        // ==========================================
+        // MÓDULOS DE REPORTES
+        // ==========================================
+
+        static void ModuloReportes_Asegurados()
+        {
+            Console.Clear();
+            Console.WriteLine("--- JUGADORES ASEGURADOS ---");
+            // Lógica para filtrar y mostrar asegurados
+
+            PausarYContinuar("");
+        }
+
+        static void ModuloReportes_Estadisticas()
+        {
+            Console.Clear();
+            Console.WriteLine("--- ESTADÍSTICAS DE LA LIGA ---");
+            // Lógica para calcular promedios y extremos de edad
+
+            PausarYContinuar("");
+        }
+
+        // ==========================================
+        // UTILIDADES Y FUNCIONES AUXILIARES
+        // ==========================================
+
+        /// <summary>
+        /// Muestra un mensaje de error estandarizado.
+        /// </summary>
+        static void MostrarError(string mensaje)
+        {
+            Console.WriteLine($"\n[ERROR]: {mensaje}");
+            PausarYContinuar("");
+        }
+
+        /// <summary>
+        /// Detiene la ejecución hasta que el usuario presiona una tecla.
+        /// </summary>
+        static void PausarYContinuar(string mensaje)
+        {
+            if (!string.IsNullOrEmpty(mensaje))
+            {
+                Console.WriteLine($"\n{mensaje}");
+            }
+            Console.WriteLine("\nPresione cualquier tecla para volver...");
+            Console.ReadKey();
+        }
+    }
+}

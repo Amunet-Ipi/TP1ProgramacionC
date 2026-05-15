@@ -26,6 +26,7 @@ namespace Solucion2
         public string NombreClub;
         public string NombreCompleto;
         public Categoria Categoria;
+        public int CantidadJugadores;
     }
     struct Jugador
     {
@@ -193,30 +194,33 @@ namespace Solucion2
         }
 
         //auxiliar para elegir de clubes
-        static string ElegirClubExistente()
+
+        static string SeleccionarEquipoPorClub()
         {
+            //Eligen club entre los existentes
+
             MostrarClubes();
-            int seleccion = SeleccionarOpcion(1, listaClubes.Count);
-            return listaClubes[seleccion - 1];
-        }
-
-        //metodo para mostrar los equipos y equipos por club
-        static void MostrarEquipos()
-        {
+            int seleccionClub = SeleccionarOpcion(1, listaClubes.Count);
+            string opcionClub = listaClubes[seleccionClub - 1];
+            //----------------
+            //Mostramos los equipos de ese club
+            //Genero variable para saber cuantos equipos hay, para luego pasar variable a la selección
+            int cantEquiposClub = 0;
+            //genero una lista de los equipos del club, para luego poder acceder por indice al nombre del equipo
+            List<Equipo> equiposDelClub = new List<Equipo>();
             for (int i = 0; i < listaEquipos.Count; i++)
             {
-                Console.WriteLine($"{i + 1}. {listaEquipos[i].NombreCompleto}");
+                if (listaEquipos[i].NombreClub == opcionClub)
+                {
+                    equiposDelClub.Add(listaEquipos[i]);
+                    cantEquiposClub++;
+                    Console.WriteLine($"{cantEquiposClub}. {listaEquipos[i].NombreCompleto}");
+                }
             }
-
-        }
-
-        static void MostrarEquiposPorClub(string nombreClub)
-        {
-            for (int i = 0; i < listaEquipos.Count; i++)
-            {
-                if (listaEquipos[i].NombreClub == nombreClub)
-                    Console.WriteLine($"{i + 1}. {listaEquipos[i].NombreCompleto}");
-            }
+            //-------------------
+            //Elegir equipo del club
+            int seleccionEquipo = SeleccionarOpcion(1, equiposDelClub.Count);
+            return equiposDelClub[seleccionEquipo - 1].NombreCompleto;
         }
 
 
@@ -225,6 +229,10 @@ namespace Solucion2
         //-------------------------------------------
         static void BajaEquipo()
         {
+            opcionClub = ElegirClubExistente();
+            
+
+
 
         }
 

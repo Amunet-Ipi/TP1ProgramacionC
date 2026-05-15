@@ -1,0 +1,82 @@
+Liga deportiva
+Actualmente, la liga presenta problemas en:
+El control de jugadores habilitados para competir
+# Por esto requieren listado de jugadores asegurados
+
+La organización de equipos por categoría
+
+La generación de listados confiables para control administrativo.
+El sistema debe:
+Gestionar equipos y jugadores (ABM)
+Validar datos ingresados por el usuario
+Generar listados según distitntos criterios
+
+Funciones del programa basicas
+
+#Equipos
+Altas de equipos con asignacion automática de nombre
+Baja de equipos
+Modificaciones de equipos
+
+#Jugadores
+Alta de jugadores con validaciones segun restricciones
+Baja de jugadores
+Modificaciones de jugadores
+
+#Funcionalidades
+Listar jugadores asegurados
+Listar jugadores: (se puede elegir una)
+- Ordenados por edad
+- Agrupados por categoria
+
+#Otros reportes
+-Jugador más joven y más viejo
+-Promedio de edad general
+
+
+ESTRUCTURAS
+#JUGADORES
+Deben tener
+- DNI (único)
+- Nombre
+- Apellido
+- Edad
+- Equipo/s asignado/s 
+- Seguro (Si/No)
+- Afiliación (Si/No)
+
+Se pediran estos datos como input y se crea la estructura de cada jugador, que podemos enlistar
+Restricciones
+- No se permiten DNIs duplicados
+- Un jugador puede estar en más de un equipo dentro del mismo club siempre que la edad se lo permita
+
+Tenemos entonces que
+Revisar que el DNI no este repetido para alta de jugador y para que no haya dos jugadores en un mismo equipo
+
+
+
+#CATEGORIAS
+Listado de categorias y restricción de edad
+- Infantiles (h/13)
+- Cadetes (13 ~ 16)
+- Juveniles (16~ 18)
+- Primera (+18)
+- Veteranos (+35)
+
+#CLUB y EQUIPOS
+- No se permiten DNIs duplicados
+- La edad del jugador debe ser coherente con la categoría del equipo
+- Un club puede tener múltiples equipos por categoría
+los equipos se nombran automáticamente: Ejemplo: “Club Norte A”, “Club Norte B”, etc.
+- Cada equipo pertenece a una única categoría
+- Minimo de jugadores por equipo 9, excepto veteranos que puede tener 10
+- El sistema debe poder detectar y reportar equipos que no cumplen con este requisito
+
+Estructura de equipo
+- Nombre del club
+- Nombre de equipo (se designa autopmaticamente)
+- Categoría única
+- 
+
+
+

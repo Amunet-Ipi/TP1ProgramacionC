@@ -39,13 +39,14 @@ namespace Solucion2
         public bool Afiliacion;
     }
     
-     //declaramos la lista de equipos donde se guardarán, fuera del main para que los metodos y como static para q los metodos puedan acceder
-    static List<string> listaClubes = new List<string>();
-    static List<Equipo> listaEquipos = new List<Equipo>();
-    static List<Jugador> listaJugadores = new List<Jugador>();
-
+     
     internal class Program
     {
+        //declaramos la lista de equipos donde se guardarán, fuera del main para que los metodos y como static para q los metodos puedan acceder
+        static List<string> listaClubes = new List<string>();
+        static List<Equipo> listaEquipos = new List<Equipo>();
+        static List<Jugador> listaJugadores = new List<Jugador>();
+
 
         //--------------
         //Definimos los métodos
@@ -496,6 +497,39 @@ namespace Solucion2
             Console.ReadKey();
         }
 
+        //-------------------------------------------
+        //LISTAS
+        //-------------------------------------------
+        //JUGADORES ASEGURADOS
+
+        static void ListarAsegurados()
+        {
+            if (listaJugadire.Count == 0)
+            {
+                Console.WriteLine("JNo hay jugadores cargados.");
+                Console.WriteLine("\nPresione cualquier tecla para volver al menu..");
+                Console.ReadKey();
+                return;
+            }
+            else
+            {
+                for (int i = 0; lista
+            }
+        }
+
+        //JUGADORES POR EDAD
+        static void ListarPorEdad()
+        {
+
+        }
+
+        //JUGADORES PO0R CATEGORIA
+        static void ListarPorCategoria()
+        {
+
+        }
+
+
 
 
         //-----------------------------------
@@ -886,6 +920,8 @@ namespace Solucion2
 
 
 
+
+
         //--------------------------------------
         //MENU PRINCIPAL
         //--------------------------------------
@@ -954,3 +990,4 @@ namespace Solucion2
 
     }
 }
+

@@ -696,9 +696,38 @@ namespace Solucion2
 
             if (!HayJugadores())
                 return;
-            foreach()
+            foreach (Categoria categoria in Enum.GetValues(typeof(Categoria)))
+            {
+                List<Jugador> jugadoresFiltrados = ObtenerJugadoresPorCategoria(categoria);
+                Console.WriteLine($"{categoria}: {jugadoresFiltrados.Count} jugadores");
+            }
+            Console.WriteLine("\nPresione cualquier tecla para continuar...");
+            Console.ReadKey();
 
+        }
+        //PROMEDIO DE EDAD DE LA LIGA
+        static void CalcularPromedioEdad()
+        {
+            Console.Clear();
+            Console.WriteLine("--- PROMEDIO DE EDAD ---");
 
+            if (!HayJugadores()) return;
+
+            int sumaEdades = 0;
+            foreach (Jugador jug in listaJugadores)
+            {
+                sumaEdades += jug.Edad;
+            }
+
+            double promedio = (double)sumaEdades / listaJugadores.Count;
+            Console.WriteLine($"El promedio general de edad en la liga es: {promedio:F2} años.");
+
+            Console.WriteLine("\nPresione cualquier tecla para continuar...");
+            Console.ReadKey();
+        }
+        //EQUIPOS INCOMPLETOS
+        static void EquiposIncompletos()
+        { 
 
         }
 
@@ -1229,7 +1258,7 @@ namespace Solucion2
                     case 11: JugadorMasViejo(); break;
                     //case 12: PromedioEdad(); break;
                     case 13: CantidadPorCategoria(); break;
-                    //case 14: EquiposIncompletos(); break;
+                    case 14: EquiposIncompletos(); break;
                     case 0: Console.WriteLine("\nSaliendo..."); break;
                 }
 

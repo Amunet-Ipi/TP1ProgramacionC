@@ -318,9 +318,13 @@ namespace Solucion2
             string apellido = IngresarString("Ingrese Apellido: ");
             int edad = IngresarEntero("Ingrese Edad: ", 1, 99);
 
-            // obtener categoria por edad
-            Categoria categoriaJugador = ObtenerCategoriaPorEdad(edad);
-            Console.WriteLine($"Categoría correspondiente: {categoriaJugador}");
+            // obtener categorias por edad
+            List<Categoria> categoriasJugador = ObtenerCategoriasPorEdad(edad);
+            Console.WriteLine("Categorías correspondientes:");
+            foreach (Categoria cat in categoriasJugador)
+            {
+                Console.WriteLine($"- {cat}");
+            }
 
             // elegir club y equipo
 
@@ -330,7 +334,7 @@ namespace Solucion2
             Console.WriteLine("\nSeleccione el club:");
             string nombreClub = ElegirClubExistente();
 
-            string nombreEquipo = SeleccionarEquipoPorClubYCategoria(nombreClub, categoriaJugador);
+            string nombreEquipo = SeleccionarEquipoPorClubYCategoria(nombreClub, categoriasJugador);
             if (nombreEquipo == "")
             {
                 Console.WriteLine("\nPresione cualquier tecla para continuar...");
@@ -1074,18 +1078,22 @@ namespace Solucion2
         /// </summary>
         /// <param name="edad">Edad del jugador</param>
         /// <returns>Categoría correspondiente según la edad</returns>
-        static Categoria ObtenerCategoriaPorEdad(int edad)
+        static List<Categoria> ObtenerCategoriasPorEdad(int edad)
         {
-            if (edad < 13)
-                return Categoria.Infantiles;
-            else if (edad >= 13 && edad < 16)
-                return Categoria.Cadetes;
-            else if (edad >= 16 && edad < 18)
-                return Categoria.Juveniles;
-            else if (edad >= 18 && edad <= 34)
-                return Categoria.Primera;
-            else
-                return Categoria.Veteranos;
+            List<Categoria> categorias = new List<Categoria>();
+
+            if (edad <= 13)
+                categorias.Add(Categoria.Infantiles);
+            if (edad >= 13 && edad <= 16)
+                categorias.Add(Categoria.Cadetes);
+            if (edad >= 16 && edad <= 18)
+                categorias.Add(Categoria.Juveniles);
+            if (edad >= 18 && edad <= 34)
+                categorias.Add(Categoria.Primera);
+            if (edad >= 35)
+                categorias.Add(Categoria.Veteranos);
+
+            return categorias;
         }
 
 
@@ -1097,12 +1105,12 @@ namespace Solucion2
         /// <param name="nombreClub">Nombre del club a filtrar</param>
         /// <param name="categoria">Categoría por la que se filtrarán los equipos</param>
         /// <returns>Nombre del equipo seleccionado, o cadena vacía si no hay equipos disponibles</returns>
-        static string SeleccionarEquipoPorClubYCategoria(string nombreClub, Categoria categoria)
+        static string SeleccionarEquipoPorClubYCategoria(string nombreClub, List<Categoria> categorias)
         {
             List<Equipo> equiposFiltrados = new List<Equipo>();
             for (int i = 0; i < listaEquipos.Count; i++)
             {
-                if (listaEquipos[i].NombreClub == nombreClub && listaEquipos[i].Categoria == categoria)
+                if (listaEquipos[i].NombreClub == nombreClub && categorias.Contains(listaEquipos[i].Categoria))
                 {
                     equiposFiltrados.Add(listaEquipos[i]);
                     Console.WriteLine($"{equiposFiltrados.Count}. {listaEquipos[i].NombreCompleto}");
@@ -1111,7 +1119,7 @@ namespace Solucion2
 
             if (equiposFiltrados.Count == 0)
             {
-                Console.WriteLine("No hay equipos disponibles para esta categoría, debe ingresar un equipo primero.");
+                Console.WriteLine("No hay equipos disponibles para estas categorías.");
                 return "";
             }
 
@@ -1151,8 +1159,12 @@ namespace Solucion2
         {
             Jugador j = listaJugadores[indice];
 
-            Categoria categoriaJugador = ObtenerCategoriaPorEdad(j.Edad);
-            Console.WriteLine($"\nCategoría del jugador: {categoriaJugador}");
+            List<Categoria> categoriasJugador = ObtenerCategoriasPorEdad(j.Edad);
+            Console.WriteLine("Categorías:");
+            foreach (Categoria cat in categoriasJugador)
+            {
+                Console.WriteLine($"- {cat}");
+            }
 
             string nombreClub = "";
             if (j.Equipos.Count > 0)
@@ -1160,7 +1172,7 @@ namespace Solucion2
             else
                 nombreClub = ElegirClubExistente();
 
-            string nombreEquipo = SeleccionarEquipoPorClubYCategoria(nombreClub, categoriaJugador);
+            string nombreEquipo = SeleccionarEquipoPorClubYCategoria(nombreClub, categoriasJugador);
             if (nombreEquipo == "")
             {
                 Console.WriteLine("No hay equipos disponibles para esta categoría.");
@@ -1219,7 +1231,7 @@ namespace Solucion2
             List<Jugador> jugadoresFiltrados = new List<Jugador>();
             for (int i = 0; i < listaJugadores.Count; i++)
             {
-                if (ObtenerCategoriaPorEdad(listaJugadores[i].Edad) == categoria)
+                if (ObtenerCategoriasPorEdad(listaJugadores[i].Edad).Contains(categoria))
                     jugadoresFiltrados.Add(listaJugadores[i]);
             }
             return jugadoresFiltrados;

@@ -295,16 +295,10 @@ namespace Solucion2
             Console.Clear();
             Console.WriteLine("--- ALTA DE JUGADOR ---");
 
-            if (listaEquipos.Count == 0)
-            {
-                Console.WriteLine("No hay equipos registrados, debe dar de alta un equipo primero.");
-                Console.WriteLine("\nPresione cualquier tecla para continuar...");
-                Console.ReadKey();
-                return;
-            }
+            if (!HayEquipos()) return;
 
-            // ingreso y validacion de DNI
-            int dni = IngresarEntero("Ingrese DNI: ", 1, 99999999);
+                // ingreso y validacion de DNI
+                int dni = IngresarEntero("Ingrese DNI: ", 1, 99999999);
             if (DNIExiste(dni))
             {
                 Console.WriteLine("Error: el DNI ya está registrado.");
@@ -328,7 +322,6 @@ namespace Solucion2
 
             // elegir club y equipo
 
-            if (!HayEquipos()) 
            
 
             Console.WriteLine("\nSeleccione el club:");
@@ -1293,7 +1286,7 @@ namespace Solucion2
                     case 9: ListarPorCategoria(); break;
                     case 10: JugadorMasJoven(); break;
                     case 11: JugadorMasViejo(); break;
-                    //case 12: PromedioEdad(); break;
+                    case 12: CalcularPromedioEdad(); break;
                     case 13: CantidadPorCategoria(); break;
                     case 14: EquiposIncompletos(); break;
                     case 0: Console.WriteLine("\nSaliendo..."); break;

@@ -34,7 +34,7 @@ namespace Solucion2
         public string Nombre;
         public string Apellido;
         public int Edad;
-        public List<string> Equipos;
+        public List<Equipo> Equipos;
         public bool Seguro;
         public bool Afiliacion;
         //No utilizamos equipos asignados ya que cada jugador
@@ -58,6 +58,7 @@ namespace Solucion2
         //Usariamos static void, que no devuelve nada en sí para el "main" de cada opcion del menu del sistema
 
 
+
         //----------------------------------------------
         //
         //EQUIPOS 
@@ -66,14 +67,37 @@ namespace Solucion2
         //ALTA EQUIPO
         //-------------------------------------------
         //Metodo principal
-        static void AltaEquipo() 
+        static void AltaEquipo()
         {
-            Console.Clear();
-            Console.WriteLine("--- ALTA DE EQUIPO ---");
-            //llamo al metodo la seleccionar el club
-            string nombreClub = SeleccionarCrearClub();
+            string nombreClub = "";
+
+            if (listaClubes.Count == 0)
+            {
+                // no hay clubes, debe ingresar uno nuevo
+                Console.WriteLine("No hay clubes registrados.");
+                nombreClub = IngresarNuevoClub();
+            }
+            else
+            {
+                // hay clubes, mostrar y permitir elegir o agregar nuevo
+                Console.WriteLine("\nClubes disponibles:");
+                MostrarClubes();
+                Console.WriteLine("0. + INGRESAR UN CLUB NUEVO...");
+
+                int opcion = SeleccionarOpcion(0, listaClubes.Count);
+
+                if (opcion == 0)
+                {
+                    nombreClub = IngresarNuevoClub();
+                }
+                else
+                {
+                    nombreClub = listaClubes[opcion - 1];
+                }
+            }
             Categoria categoria = SeleccionarCategoria();
-            string nombreCompleto = GenerarNombreEquipo(nombreClub);
+            string nombreCompleto = GenerarNombreEquipo(nombreClub, categoria);
+
             Equipo nuevo;
             nuevo.NombreClub = nombreClub;
             nuevo.NombreCompleto = nombreCompleto;
@@ -81,92 +105,10 @@ namespace Solucion2
             nuevo.CantidadJugadores = 0;
 
             listaEquipos.Add(nuevo);
-            Console.WriteLine($"Equipo creado: {nombreCompleto}");
-
+            Console.WriteLine($"\nEquipo creado: {nombreCompleto}");
+            Console.WriteLine("\nPresione cualquier tecla para continuar...");
+            Console.ReadKey();
         }
-
-        //Metodos auxiliares
-        //Usemos static return-type para hacer las funcionalidades y que no quede todo el void
-        //Metodo para que seleccione club o ingrese uno nuevo
-        //mostrar los club, permitir elegir uno o agregar
-        static void MostrarClubes()
-        {
-            //muestro los clubes recorriendo lista con for y la opcion de nuevo
-            for (int i = 0; i < listaClubes.Count; i++)
-            {
-                Console.WriteLine($"{i + 1}. {listaClubes[i]}");
-            }
-        }
-        //metodo general para que selecciones un opcion numerica
-        //puedo reutilizar en todos los menus
-        //validacion de la selecciones
-        static int SeleccionarOpcion(int min, int max)
-        {
-            int seleccion = 0;
-            do
-            {
-                Console.Write("\nSeleccione una opción: ");
-                bool esNumero = int.TryParse(Console.ReadLine(), out seleccion);
-
-                if (!esNumero)
-                    Console.WriteLine("Error: ingrese un número.");
-                else if (seleccion < min || seleccion > max)
-                    Console.WriteLine("Error: opción inválida.");
-
-            } while (seleccion < min || seleccion > max);
-
-            return seleccion;
-        }
-
-        //metodo quepermite seleccionar o crear club
-
-
-        static string SeleccionarCrearClub()
-        {
-            //defino variable para nombre del club
-            string nombreClub = "";
-            Console.WriteLine("\nClubes disponibles en el sistema:");
-            MostrarClubes();
-            //variable cantidad de clubes
-            int opcionNuevo = listaClubes.Count + 1;
-            //muestro opcion de ingresar nuevo club
-            Console.WriteLine($"{opcionNuevo}. INGRESAR UN CLUB NUEVO...");
-            //permito seleccion de nuevo club
-            //uso do-while ya que almenos una vez debe ingresar y validar
-            int seleccion = SeleccionarOpcion(1, opcionNuevo);
-            if (seleccion == opcionNuevo)
-            {
-                // ingresa un club nuevo
-                Console.Write("Ingrese el nombre del nuevo club: ");
-                nombreClub = Console.ReadLine();
-                listaClubes.Add(nombreClub);
-            }
-            else
-            {
-                // seleccionó uno existente
-                nombreClub = listaClubes[seleccion - 1];
-            }
-            return nombreClub;
-        }
-
-
-        //Metodo para que pueda seleccionar una categoria
-        static Categoria SeleccionarCategoria()
-        {
-
-
-        }
-
-        //Generar un nombre de equipo
-        //Considerando que es automatica, hay que buscar si el club tiene equipos cuanto y en base a eso darle un nombre
-        //Se indico que es tipo club fulano A, club fulano B y asi.
-        //queda mas lindo si incorporamos la categoria tambien
-        //CLUB + CATEGORIA + LETRA
-        static string GenerarNombreEquipo(string nombreClub)
-        {
-            //ver metodo
-        }
-
         //-------------------------------------------
         //MODIFICAR EQUIPO
         //-------------------------------------------
@@ -176,68 +118,15 @@ namespace Solucion2
         //Considerando que los nombres se asignan automaticaticamente, no se deberian poder modificar.
         //Dejamos que solo se puedan modificar lo jugadores?
         //baja de jugadores del equipo
-        static void ModificarEquipo()
-        {
-            //mostramos clubes, que eliga club y luego los equipos del club
-            Console.WriteLine("\nClubes disponibles en el sistema:")
-            string clubElegido= ElegirClubExistente()
-            //muestro equipos por club
-            Console.WriteLine($"Equipos del club : {clubElegido}");
-            Console.WriteLine("Selecciones el numero del equipo que desea modificar: ");
-            MostrarEquiposPorClub(clubElegido)
-            //que eliga una opcion a modificar
-            //para eso necesito pasar el valor max y min de la seleccion, entonces debo saber cuantos equipos tengo del club
-            int cantEquiposClub = 0;
-            for (int i = 0; i < listaEquipos.Count; i++)
-            {
-                if (listaEquipos[i].NombreClub == clubElegido)
-                    cantEquiposClub++;
-            }
-            int seleccion = SeleccionarOpcion(1, cantEquiposClub);
+         //mostrar los jugadores de equipo
+         //elegir cual eleminiar del equipo
+         //eliminar el equipo de la lista de equipos del jugador y decrementar cantidad de jugadores
+         //dar la opcion de borrar todos los jugadores
+        
+
+        
 
 
-            //mostrar los jugadores de equipo
-            //elegir cual eleminiar del equipo
-            //eliminar el equipo de la lista de equipos del jugador y decrementar cantidad de jugadores
-            //dar la opcion de borrar todos los jugadores
-
-        }
-
-        //auxiliar para elegir de clubes
-
-        static string SeleccionarClub()
-        {
-            int seleccion = SeleccionarOpcion(1, listaClubes.Count);
-            return listaClubes[seleccion - 1];
-        }
-
-        //static string SeleccionarEquipoPorClub()
-        //{
-        //    //Eligen club entre los existentes
-
-        //    MostrarClubes();
-        //    int seleccionClub = SeleccionarOpcion(1, listaClubes.Count);
-        //    string opcionClub = listaClubes[seleccionClub - 1];
-        //    //----------------
-        //    //Mostramos los equipos de ese club
-        //    //Genero variable para saber cuantos equipos hay, para luego pasar variable a la selección
-        //    int cantEquiposClub = 0;
-        //    //genero una lista de los equipos del club, para luego poder acceder por indice al nombre del equipo
-        //    List<Equipo> equiposDelClub = new List<Equipo>();
-        //    for (int i = 0; i < listaEquipos.Count; i++)
-        //    {
-        //        if (listaEquipos[i].NombreClub == opcionClub)
-        //        {
-        //            equiposDelClub.Add(listaEquipos[i]);
-        //            cantEquiposClub++;
-        //            Console.WriteLine($"{cantEquiposClub}. {listaEquipos[i].NombreCompleto}");
-        //        }
-        //    }
-        //-------------------
-        //Elegir equipo del club
-        int seleccionEquipo = SeleccionarOpcion(1, equiposDelClub.Count);
-            return equiposDelClub[seleccionEquipo - 1].NombreCompleto;
-        }
 
 
         //-------------------------------------------
@@ -246,7 +135,10 @@ namespace Solucion2
         //SE ELIMINA
         static void BajaEquipo()
         {
-            opcionClub = ElegirClubExistente();
+            if (listaClub.Count > 0)
+            {
+                SeleccionarEquipoPorClub()
+            }
             
 
 
@@ -269,27 +161,6 @@ namespace Solucion2
             //afiliado
         }
 
-        //Validar que el DNI no esté duplicado, devolver booleano
-        static bool ValidarDNI()
-        {
-
-
-        }
-
-        /
-        static string SeleccionarEquipo()
-        {
-
-
-        }
-
-
-        //validar que la edad corresponda a la categoria del equipo
-        static bool ValidarEdad()
-        { 
-            
-
-        }
 
         //-------------------------------------------
         //MODIFICAR JUGADOR
@@ -301,15 +172,196 @@ namespace Solucion2
 
         }
 
-        static
 
-       //-------------------------------------------
-       //BAJA JUGADOR
-       //-------------------------------------------
-       //SE ELIMINA
+        //-------------------------------------------
+        //BAJA JUGADOR
+        //-------------------------------------------
+        static void BajaEquipo()
+        {
+            Console.Clear();
+            Console.WriteLine("--- BAJA DE EQUIPO ---");
+
+            if (listaEquipos.Count == 0)
+            {
+                Console.WriteLine("No hay equipos registrados.");
+                Console.WriteLine("\nPresione cualquier tecla para continuar...");
+                Console.ReadKey();
+                return;
+            }
+
+            string nombreEquipoElegido = SeleccionarEquipoPorClub();
+
+            //primer for para recorrer lista de equipos
+            for (int i = 0; i < listaEquipos.Count; i++)
+            {
+                //busco el equipo con el nombre elegido
+                if (listaEquipos[i].NombreCompleto == nombreEquipoElegido)
+                {
+                    //corroboro si tiene 0 o mas jugadores
+                    if (listaEquipos[i].CantidadJugadores > 0)
+                    {
+                        Console.WriteLine("No se puede eliminar, tiene jugadores asignados.");
+                    }
+                    else
+                    {
+                        Console.WriteLine($"\nVa a eliminar el equipo: {nombreEquipoElegido}");
+                        if (Confirmar())
+                        {
+                            listaEquipos.RemoveAt(i);
+                            Console.WriteLine("Equipo eliminado exitosamente.");
+                        }
+                        else
+                        {
+                            Console.WriteLine("Baja cancelada.");
+                        }
+                    }
+                    break;
+                }
+            }
+
+            Console.WriteLine("\nPresione cualquier tecla para continuar...");
+            Console.ReadKey();
+        }
 
 
-       static void Main(string[] args)
+        //-----------------------------------
+        //METODOS AUXILIARES
+        //-----------------------------------
+        //Usemos static return-type para hacer las funcionalidades y que no quede todo el void
+        //
+
+        //Auxiliar para confirmar
+        static bool Confirmar()
+        {
+            string input = "";
+            do
+            {
+                Console.Write("¿Confirma? (S/N): ");
+                input = Console.ReadLine().ToUpper();
+
+                if (input != "S" && input != "N")
+                    Console.WriteLine("Error: ingrese S o N.");
+
+            } while (input != "S" && input != "N");
+
+            return input == "S";
+        }
+
+        //Auxiliar para seleccionar opcion numerica
+        static int SeleccionarOpcion(int min, int max)
+        {
+            int seleccion = 0;
+            do
+            {
+                Console.Write("\nSeleccione una opción: ");
+                bool esNumero = int.TryParse(Console.ReadLine(), out seleccion);
+
+                if (!esNumero)
+                    Console.WriteLine("Error: ingrese un número.");
+                else if (seleccion < min || seleccion > max)
+                    Console.WriteLine("Error: opción inválida.");
+
+            } while (seleccion < min || seleccion > max);
+
+            return seleccion;
+        }
+
+        //Auxiliar para mostrar los clubes enlistados
+
+        static void MostrarClubes()
+        {
+            for (int i = 0; i < listaClubes.Count; i++)
+            {
+                Console.WriteLine($"{i + 1}. {listaClubes[i]}");
+            }
+        }
+
+        static string ElegirClubExistente()
+        {
+            MostrarClubes();
+            int seleccion = SeleccionarOpcion(1, listaClubes.Count);
+            return listaClubes[seleccion - 1];
+        }
+
+        static Categoria SeleccionarCategoria()
+        {
+            Console.WriteLine("\nCategorías disponibles:");
+            Console.WriteLine("1. Infantiles (hasta 13 años)");
+            Console.WriteLine("2. Cadetes (13 a 16 años)");
+            Console.WriteLine("3. Juveniles (16 a 18 años)");
+            Console.WriteLine("4. Primera (mayores de 18)");
+            Console.WriteLine("5. Veteranos (mayores de 35)");
+
+            int opcion = SeleccionarOpcion(1, 5);
+            return (Categoria)(opcion - 1);
+        }
+
+        static string IngresarNuevoClub()
+        {
+            string nombreClub = "";
+            do
+            {
+                Console.Write("Ingrese el nombre del nuevo club: ");
+                nombreClub = Console.ReadLine();
+                Console.WriteLine($"El club a ingresar es: {nombreClub}");
+            } while (!Confirmar());
+
+            listaClubes.Add(nombreClub);
+            return nombreClub;
+        }
+
+
+
+        static string GenerarNombreEquipo(string nombreClub, Categoria categoria)
+        {
+            int cantidadExistentes = 0;
+            for (int i = 0; i < listaEquipos.Count; i++)
+            {
+                if (listaEquipos[i].NombreClub == nombreClub && listaEquipos[i].Categoria == categoria)
+                cantidadExistentes++;
+            }
+
+            char sufijo = (char)('A' + cantidadExistentes);
+            return $"{nombreClub} {categoria} {sufijo}";
+
+        }
+
+        /// <summary>
+        /// Metodo para elegir un equipo pertenieciente a un club, permite primero ver y elegir club, luego muestra equipos de ese club y permite seleccionar uno
+        /// </summary>
+        /// <returns>Equipo Seleccionado</returns>
+        static string SeleccionarEquipoPorClub()
+        {
+            MostrarClubes();
+            int seleccionClub = SeleccionarOpcion(1, listaClubes.Count);
+            string opcionClub = listaClubes[seleccionClub - 1];
+
+            List<Equipo> equiposDelClub = new List<Equipo>();
+            for (int i = 0; i < listaEquipos.Count; i++)
+            {
+                if (listaEquipos[i].NombreClub == opcionClub)
+                {
+                    equiposDelClub.Add(listaEquipos[i]);
+                    Console.WriteLine($"{equiposDelClub.Count}. {listaEquipos[i].NombreCompleto}");
+                }
+            }
+
+            int seleccionEquipo = SeleccionarOpcion(1, equiposDelClub.Count);
+            return equiposDelClub[seleccionEquipo - 1].NombreCompleto;
+        }
+
+
+
+
+
+        //auxiliar para elegir de clubes
+
+
+        //--------------------------------------
+        //MENU PRINCIPAL
+        //--------------------------------------
+
+        static void Main(string[] args)
         {
             int opcion = -1;
             do

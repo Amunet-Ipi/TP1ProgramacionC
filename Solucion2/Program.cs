@@ -935,7 +935,7 @@ namespace Solucion2
 
             if (equiposFiltrados.Count == 0)
             {
-                Console.WriteLine("No hay equipos disponibles para esta categoría.");
+                Console.WriteLine("No hay equipos disponibles para esta categoría, debe ingresar un equipo primero.");
                 return "";
             }
 

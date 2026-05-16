@@ -67,6 +67,8 @@ namespace Solucion2
         /// </summary>
         static void AltaEquipo()
         {
+            Console.Clear();
+            Console.WriteLine("--- ALTA EQUIPO ---");
             string nombreClub = "";
 
             if (listaClubes.Count == 0)
@@ -737,16 +739,18 @@ namespace Solucion2
         /// <returns>Opción numérica seleccionada por el usuario</returns>
         static int SeleccionarOpcion(int min, int max)
         {
-            int seleccion = 0;
+            int seleccion;
+            bool valido;
+
             do
             {
                 Console.Write("\nSeleccione una opción: ");
-                bool esNumero = int.TryParse(Console.ReadLine(), out seleccion);
+                valido = int.TryParse(Console.ReadLine(), out seleccion) && seleccion >= min && seleccion <= max;
 
-                if (!esNumero)
-                    Console.WriteLine("Error: opción inválida.");
+                if (!valido)
+                    Console.WriteLine($"Error: ingrese un número entre {min} y {max}.");
 
-            } while (seleccion < min || seleccion > max);
+            } while (!valido);
 
             return seleccion;
         }

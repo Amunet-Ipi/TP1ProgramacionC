@@ -504,23 +504,94 @@ namespace Solucion2
 
         static void ListarAsegurados()
         {
-            if (listaJugadire.Count == 0)
+            Console.Clear();
+            Console.WriteLine("--- JUGADORES ASEGURADOS ---");
+
+            //primero chequeo que haya jugadores
+            if (listaJugadores.Count == 0)
             {
-                Console.WriteLine("JNo hay jugadores cargados.");
-                Console.WriteLine("\nPresione cualquier tecla para volver al menu..");
+                Console.WriteLine("No hay jugadores registrados.");
+                Console.WriteLine("\nPresione cualquier tecla para continuar...");
                 Console.ReadKey();
                 return;
             }
+
+            // si hay filto los asegurados
+            //genero mi lista donde guardare los asegurados
+            List<Jugador> asegurados = new List<Jugador>();
+            //recorro lista de jugadores y me quedo con los asegurados
+            for (int i = 0; i < listaJugadores.Count; i++)
+            {
+                if (listaJugadores[i].Seguro)
+                    asegurados.Add(listaJugadores[i]);
+            }
+            //si no hay asegurados aviso
+            if (asegurados.Count == 0)
+            {
+                Console.WriteLine("No hay jugadores asegurados.");
+            }
+            //si hay asegurados entonces recorro la lista de asegurados y los muestro
             else
             {
-                for (int i = 0; lista
+                foreach (Jugador j in asegurados)
+                {
+                    Console.WriteLine($"{j.Nombre} {j.Apellido} | Equipos: ");
+                    foreach (string equipo in j.Equipos)
+                    {
+                        Console.WriteLine($"  - {equipo}");
+                    }
+                }
             }
+
+            Console.WriteLine("\nPresione cualquier tecla para continuar...");
+            Console.ReadKey();
         }
 
         //JUGADORES POR EDAD
         static void ListarPorEdad()
         {
+            Console.Clear();
+            Console.WriteLine("--- JUGADORES POR CATEGORIA ---");
 
+            //primero chequeo que haya jugadores
+            if (listaJugadores.Count == 0)
+            {
+                Console.WriteLine("No hay jugadores registrados.");
+                Console.WriteLine("\nPresione cualquier tecla para continuar...");
+                Console.ReadKey();
+                return;
+            }
+
+            // si hay entonces permito que selecciones la edad a filtrar
+            
+            //genero mi lista donde guardare los jugadores con esa edad
+            List<Jugador> asegurados = new List<Jugador>();
+            //recorro lista de jugadores y me quedo con los asegurados
+            for (int i = 0; i < listaJugadores.Count; i++)
+            {
+                if (listaJugadores[i].Seguro)
+                    asegurados.Add(listaJugadores[i]);
+            }
+            //si no hay asegurados aviso
+            if (asegurados.Count == 0)
+            {
+                Console.WriteLine("No hay jugadores asegurados.");
+            }
+            //si hay asegurados entonces recorro la lista de asegurados y los muestro
+            else
+            {
+                foreach (Jugador j in asegurados)
+                {
+                    Console.WriteLine($"{j.Nombre} {j.Apellido} | Equipos: ");
+                    foreach (string equipo in j.Equipos)
+                    {
+                        Console.WriteLine($"  - {equipo}");
+                    }
+                }
+            }
+
+            Console.WriteLine("\nPresione cualquier tecla para continuar...");
+            Console.ReadKey();
         }
 
         //JUGADORES PO0R CATEGORIA
@@ -991,3 +1062,4 @@ namespace Solucion2
     }
 }
 
+    

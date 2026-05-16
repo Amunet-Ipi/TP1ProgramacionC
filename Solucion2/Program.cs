@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-// Jere tambien estuvo aca y no hizo nada.....
 namespace Solucion2
 {
     /*Definición de tipos
@@ -24,7 +23,7 @@ namespace Solucion2
     //Utilizamos estructuras para definir Equipos y Jugadores
     struct Equipo
     {
-        public string NombreClub; //santi estuvo aqui
+        public string NombreClub;
         public string NombreCompleto;
         public Categoria Categoria;
         public int CantidadJugadores;
@@ -123,13 +122,7 @@ namespace Solucion2
             Console.Clear();
             Console.WriteLine("--- BAJA DE EQUIPO ---");
 
-            if (listaEquipos.Count == 0)
-            {
-                Console.WriteLine("No hay equipos registrados.");
-                Console.WriteLine("\nPresione cualquier tecla para continuar...");
-                Console.ReadKey();
-                return;
-            }
+            if (!HayEquipos()) return;
 
             string nombreEquipoElegido = SeleccionarEquipoPorClub();
 
@@ -177,13 +170,7 @@ namespace Solucion2
             Console.Clear();
             Console.WriteLine("--- MODIFICAR EQUIPO ---");
 
-            if (listaEquipos.Count == 0)
-            {
-                Console.WriteLine("No hay equipos registrados.");
-                Console.WriteLine("\nPresione cualquier tecla para continuar...");
-                Console.ReadKey();
-                return;
-            }
+            if (!HayEquipos()) return;
             //selecciona equipo
             string nombreEquipoElegido = SeleccionarEquipoPorClub();
 
@@ -334,6 +321,10 @@ namespace Solucion2
             Console.WriteLine($"Categoría correspondiente: {categoriaJugador}");
 
             // elegir club y equipo
+
+            if (!HayEquipos()) 
+           
+
             Console.WriteLine("\nSeleccione el club:");
             string nombreClub = ElegirClubExistente();
 
@@ -381,31 +372,66 @@ namespace Solucion2
             Console.Clear();
             Console.WriteLine("--- BAJA DE JUGADOR ---");
 
-            int dni = IngresarEntero("Ingrese DNI: ", 1, 99999999);
-            int indice = BuscarJugadorPorDNI(dni);
+            if (!HayJugadores()) return;
+
+            Console.WriteLine("¿Cómo desea buscar al jugador?");
+            Console.WriteLine("1. Buscar por DNI");
+            Console.WriteLine("2. Buscar por Apellido");
+            Console.WriteLine("0. Volver al menú principal");
+
+            int opcionBusqueda = SeleccionarOpcion(0, 2);
+            int indice = -1;
+
+            switch (opcionBusqueda)
+            {
+                case 1:
+                    int dni = IngresarEntero("Ingrese DNI: ", 1, 99999999);
+                    indice = BuscarJugadorPorDNI(dni);
+                    break;
+
+                case 2:
+                    string apellido = IngresarString("Ingrese el apellido: ");
+                    List<int> coincidencias = BuscarJugadorPorApellido(apellido);
+
+                    if (coincidencias.Count == 0)
+                        indice = -1;
+                    else if (coincidencias.Count == 1)
+                        indice = coincidencias[0];
+                    else
+                    {
+                        Console.WriteLine($"\nSe encontraron {coincidencias.Count} jugadores:");
+                        for (int i = 0; i < coincidencias.Count; i++)
+                        {
+                            Jugador j = listaJugadores[coincidencias[i]];
+                            Console.WriteLine($"{i + 1}. {j.Nombre} {j.Apellido} | DNI: {j.DNI}");
+                        }
+                        int seleccion = SeleccionarOpcion(1, coincidencias.Count);
+                        indice = coincidencias[seleccion - 1];
+                    }
+                    break;
+
+                case 0:
+                    return;
+            }
 
             if (indice == -1)
             {
-                Console.WriteLine("Jugador no encontrado.");
+                Console.WriteLine("\nJugador no encontrado.");
                 Console.WriteLine("\nPresione cualquier tecla para continuar...");
                 Console.ReadKey();
                 return;
             }
 
-            // mostrar datos del jugador encontrado
-            Jugador j = listaJugadores[indice];
-            Console.WriteLine($"\nJugador encontrado: {j.Nombre} {j.Apellido} | Edad: {j.Edad}");
+            Jugador jugador = listaJugadores[indice];
+            Console.WriteLine($"\nJugador encontrado: {jugador.Nombre} {jugador.Apellido} | DNI: {jugador.DNI}");
+            Console.WriteLine($"Va a eliminar al jugador {jugador.Nombre} {jugador.Apellido}");
 
-            Console.WriteLine($"\nVa a eliminar al jugador {j.Nombre} {j.Apellido}");
-            if (Confirmar("¿Confirma la eliminación? S/N"))
+            if (Confirmar("¿Confirma la eliminación? (S/N): "))
             {
-                // quitar jugador de todos sus equipos
-                for (int i = 0; i < j.Equipos.Count; i++)
+                for (int i = 0; i < jugador.Equipos.Count; i++)
                 {
-                    QuitarEquipoDeJugador(dni, j.Equipos[i]);
-                    DecrementarJugadoresEquipo(j.Equipos[i]);
+                    DecrementarJugadoresEquipo(jugador.Equipos[i]);
                 }
-
                 listaJugadores.RemoveAt(indice);
                 Console.WriteLine("Jugador eliminado exitosamente.");
             }
@@ -431,6 +457,8 @@ namespace Solucion2
         {
             Console.Clear();
             Console.WriteLine("--- MODIFICAR JUGADOR ---");
+
+            if (!HayJugadores()) return;
 
             int dni = IngresarEntero("Ingrese DNI: ", 1, 99999999);
             int indice = BuscarJugadorPorDNI(dni);
@@ -511,13 +539,7 @@ namespace Solucion2
             Console.WriteLine("--- JUGADORES ASEGURADOS ---");
 
             //primero chequeo que haya jugadores
-            if (listaJugadores.Count == 0)
-            {
-                Console.WriteLine("No hay jugadores registrados.");
-                Console.WriteLine("\nPresione cualquier tecla para continuar...");
-                Console.ReadKey();
-                return;
-            }
+            if (!HayJugadores()) return;
 
             // si hay filto los asegurados
             //genero mi lista donde guardare los asegurados
@@ -557,6 +579,96 @@ namespace Solucion2
             Console.WriteLine("--- JUGADORES POR CATEGORIA ---");
 
             //primero chequeo que haya jugadores
+            if (!HayJugadores()) return;
+
+            //Si hay jugadores, los voy a tener que guardar en un stack por edad, ingresando el mas viejo al mas joven
+            //Para eso debo recorrer la lista de jugadores desde la edad mas alta a la mas baja e ir guardando en el stack
+            //entoces debo ir guardandolos en el stack
+
+            //obtengo las edades
+            int edadMin = ObtenerEdadMinima();
+            int edadMax = ObtenerEdadMaxima();
+
+            Stack<Jugador> stack = new Stack<Jugador>();
+            //recorro lista desde el mas grande, guardo en stack y decremento la edad
+            for (int edad = edadMax; edad >= edadMin; edad--)
+            {
+                for (int i = 0; i < listaJugadores.Count; i++)
+                {
+                    if (listaJugadores[i].Edad == edad)
+                        stack.Push(listaJugadores[i]);
+                }
+            }
+
+            foreach (Jugador j in stack)
+            {
+                Console.WriteLine($"Edad: {j.Edad} | {j.Nombre} {j.Apellido}");
+            }
+
+            Console.WriteLine("\nPresione cualquier tecla para continuar...");
+            Console.ReadKey();
+
+        }
+
+        //JUGADORES POR CATEGORIA
+        static void ListarPorCategoria()
+        {
+            Console.Clear();
+            Console.WriteLine("--- JUGADORES POR CATEGORÍA ---");
+
+            if (!HayJugadores()) return;
+
+            Categoria categoria = SeleccionarCategoria();
+            List<Jugador> jugadoresFiltrados = ObtenerJugadoresPorCategoria(categoria);
+
+            if (jugadoresFiltrados.Count == 0)
+            {
+                Console.WriteLine("No hay jugadores en esta categoría.");
+            }
+            else
+            {
+                foreach (Jugador j in jugadoresFiltrados)
+                {
+                    Console.WriteLine($"{j.Nombre} {j.Apellido} | Edad: {j.Edad}");
+                }
+            }
+
+            Console.WriteLine("\nPresione cualquier tecla para continuar...");
+            Console.ReadKey();
+        }
+
+        //-----------------------------------
+        //
+        //REPORTES GENERALES
+        //
+        //-----------------------------------
+
+        //JUGADOR MAS JOVEN
+        static void JugadorMasJoven()
+        {
+            Console.Clear();
+            Console.WriteLine("--- JUGADOR MÁS JOVEN ---");
+
+            if (!HayJugadores()) return;
+
+            int edadMin = ObtenerEdadMinima();
+
+            for (int i = 0; i < listaJugadores.Count; i++)
+            {
+                if (listaJugadores[i].Edad == edadMin)
+                    Console.WriteLine($"{listaJugadores[i].Nombre} {listaJugadores[i].Apellido} | Edad: {edadMin}");
+            }
+
+            Console.WriteLine("\nPresione cualquier tecla para continuar...");
+            Console.ReadKey();
+        }
+
+        //JUGADOR MAS VIEJO
+        static void JugadorMasViejo()
+        {
+            Console.Clear();
+            Console.WriteLine("--- JUGADOR MÁS VIEJO ---");
+
             if (listaJugadores.Count == 0)
             {
                 Console.WriteLine("No hay jugadores registrados.");
@@ -565,46 +677,17 @@ namespace Solucion2
                 return;
             }
 
-            // si hay entonces permito que selecciones la edad a filtrar
-            
-            //genero mi lista donde guardare los jugadores con esa edad
-            List<Jugador> asegurados = new List<Jugador>();
-            //recorro lista de jugadores y me quedo con los asegurados
+            int edadMax = ObtenerEdadMaxima();
+
             for (int i = 0; i < listaJugadores.Count; i++)
             {
-                if (listaJugadores[i].Seguro)
-                    asegurados.Add(listaJugadores[i]);
-            }
-            //si no hay asegurados aviso
-            if (asegurados.Count == 0)
-            {
-                Console.WriteLine("No hay jugadores asegurados.");
-            }
-            //si hay asegurados entonces recorro la lista de asegurados y los muestro
-            else
-            {
-                foreach (Jugador j in asegurados)
-                {
-                    Console.WriteLine($"{j.Nombre} {j.Apellido} | Equipos: ");
-                    foreach (string equipo in j.Equipos)
-                    {
-                        Console.WriteLine($"  - {equipo}");
-                    }
-                }
+                if (listaJugadores[i].Edad == edadMax)
+                    Console.WriteLine($"{listaJugadores[i].Nombre} {listaJugadores[i].Apellido} | Edad: {edadMax}");
             }
 
             Console.WriteLine("\nPresione cualquier tecla para continuar...");
             Console.ReadKey();
         }
-
-        //JUGADORES PO0R CATEGORIA
-        static void ListarPorCategoria()
-        {
-
-        }
-
-
-
 
         //-----------------------------------
         //METODOS AUXILIARES
@@ -708,6 +791,32 @@ namespace Solucion2
             } while (!esNumero || valor < min || valor > max);
 
             return valor;
+        }
+
+        //Auxiliar comprobar si hay jugadores y equipo 
+        static bool HayJugadores()
+        {
+            if (listaJugadores.Count == 0)
+            {
+                Console.WriteLine("No hay jugadores registrados.");
+                Console.WriteLine("Debera realizar el alta de un jugador para realizar la acción.");
+                Console.WriteLine("\nPresione cualquier tecla para continuar...");
+                Console.ReadKey();
+                return false;
+            }
+            return true;
+        }
+        static bool HayEquipos()
+        {
+            if (listaEquipos.Count == 0)
+            {
+                Console.WriteLine("No hay equipos registrados.");
+                Console.WriteLine("Debera realizar el alta de un equipo para realizar la acción.");
+                Console.WriteLine("\nPresione cualquier tecla para continuar...");
+                Console.ReadKey();
+                return false;
+            }
+            return true;
         }
 
         //Auxiliar para mostrar los clubes enlistados
@@ -959,6 +1068,17 @@ namespace Solucion2
             return -1;
         }
 
+        static List<int> BuscarJugadorPorApellido(string apellido)
+        {
+            List<int> coincidencias = new List<int>();
+            for (int i = 0; i < listaJugadores.Count; i++)
+            {
+                if (listaJugadores[i].Apellido == apellido)
+                    coincidencias.Add(i);
+            }
+            return coincidencias;
+        } 
+
         //auxliar para agregar equipo a jugador
         static void AgregarEquipoAJugador(int indice)
         {
@@ -1003,7 +1123,40 @@ namespace Solucion2
             return "";
         }
 
+        //Auxiliar para edad minima y maxima
+        static int ObtenerEdadMinima()
+        {
+            int edadMin = listaJugadores[0].Edad;
+            for (int i = 1; i < listaJugadores.Count; i++)
+            {
+                if (listaJugadores[i].Edad < edadMin)
+                    edadMin = listaJugadores[i].Edad;
+            }
+            return edadMin;
+        }
 
+
+        static int ObtenerEdadMaxima()
+        {
+            int edadMax = listaJugadores[0].Edad;
+            for (int i = 1; i < listaJugadores.Count; i++)
+            {
+                if (listaJugadores[i].Edad > edadMax)
+                    edadMax = listaJugadores[i].Edad;
+            }
+            return edadMax;
+        }
+
+        static List<Jugador> ObtenerJugadoresPorCategoria(Categoria categoria)
+        {
+            List<Jugador> jugadoresFiltrados = new List<Jugador>();
+            for (int i = 0; i < listaJugadores.Count; i++)
+            {
+                if (ObtenerCategoriaPorEdad(listaJugadores[i].Edad) == categoria)
+                    jugadoresFiltrados.Add(listaJugadores[i]);
+            }
+            return jugadoresFiltrados;
+        }
 
         //--------------------------------------
         //MENU PRINCIPAL
@@ -1057,10 +1210,10 @@ namespace Solucion2
                     case 5: BajaJugador(); break;
                     case 6: ModificarJugador(); break;
                     case 7: ListarAsegurados(); break;
-                    //case 8: ListarPorEdad(); break;
-                    //case 9: ListarPorCategoria(); break;
-                    //case 10: JugadorMasJoven(); break;
-                    //case 11: JugadorMasViejo(); break;
+                    case 8: ListarPorEdad(); break;
+                    case 9: ListarPorCategoria(); break;
+                    case 10: JugadorMasJoven(); break;
+                    case 11: JugadorMasViejo(); break;
                     //case 12: PromedioEdad(); break;
                     //case 13: CantidadPorCategoria(); break;
                     //case 14: EquiposIncompletos(); break;

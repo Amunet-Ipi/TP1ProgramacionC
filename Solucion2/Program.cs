@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+// Jere tambien estuvo aca y no hizo nada.....
 namespace Solucion2
 {
     /*Definición de tipos

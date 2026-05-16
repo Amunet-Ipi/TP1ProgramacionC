@@ -137,6 +137,8 @@ BajaEquipo()
                 ├── "Equipo eliminado exitosamente"
                 └── break}
 
+
+
 ModificarEquipo()
 │
 ├── Si listaEquipos.Count == 0
@@ -198,6 +200,28 @@ AltaJugador()
     ├── Crear Jugador
     └── listaJugadores.Add(jugador)
         └── IncrementarJugadoresEquipo(nombreEquipo)
+
+BajaJugador()
+├── IngresarEntero("DNI: ") → dni
+├── BuscarJugadorPorDNI(dni) → indice
+│   ├── Si no existe → "Jugador no encontrado", return
+│   └── Si existe → continuar
+├── Mostrar datos del jugador encontrado
+├── Confirmar()
+├── Para cada equipo del jugador
+│   ├── QuitarEquipoDeJugador(dni, nombreEquipo)
+│   └── DecrementarJugadoresEquipo(nombreEquipo)
+└── listaJugadores.RemoveAt(indice)
+
+ModificarJugador()
+├── IngresarEntero("DNI: ") → dni
+├── BuscarJugadorPorDNI(dni) → indice
+│   ├── Si no existe → "Jugador no encontrado", return
+│   └── Si existe → continuar
+├── Mostrar opciones:
+│   ├── 1. Modificar Seguro
+│   ├── 2. Modificar Afiliacion
+│   └── 3. Agregar equipo
 
 Confirmar()
 ├── do-while
@@ -284,6 +308,14 @@ static bool DNIExiste(int dni)
 │       └── return true
 │
 └── return false
+
+static int BuscarJugadorPorDNI(int dni)
+├── for listaJugadores
+│   └── Si DNI == dni
+│       └── return i
+└── return -1 (no encontrado)
+
+
 
 
 

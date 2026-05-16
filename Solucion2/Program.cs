@@ -638,6 +638,17 @@ namespace Solucion2
             return equiposFiltrados[seleccion - 1].NombreCompleto;
         }
 
+        //Auxiliar para buscar jugador por dni
+        static int BuscarJugadorPorDNI(int dni)
+        {
+            for (int i = 0; i < listaJugadores.Count; i++)
+            {
+                if (listaJugadores[i].DNI == dni)
+                    return i;
+            }
+            return -1;
+        }
+
         //--------------------------------------
         //MENU PRINCIPAL
         //--------------------------------------

@@ -1056,8 +1056,8 @@ namespace Solucion2
                     case 5: BajaJugador(); break;
                     case 6: ModificarJugador(); break;
                     case 7: ListarAsegurados(); break;
-                    case 8: ListarPorEdad(); break;
-                    case 9: ListarPorCategoria(); break;
+                    //case 8: ListarPorEdad(); break;
+                    //case 9: ListarPorCategoria(); break;
                     //case 10: JugadorMasJoven(); break;
                     //case 11: JugadorMasViejo(); break;
                     //case 12: PromedioEdad(); break;

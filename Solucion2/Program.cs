@@ -23,7 +23,7 @@ namespace Solucion2
     //Utilizamos estructuras para definir Equipos y Jugadores
     struct Equipo
     {
-        public string NombreClub;
+        public string NombreClub; //santi estuvo aqui
         public string NombreCompleto;
         public Categoria Categoria;
         public int CantidadJugadores;

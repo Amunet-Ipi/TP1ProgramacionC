@@ -727,8 +727,33 @@ namespace Solucion2
         }
         //EQUIPOS INCOMPLETOS
         static void EquiposIncompletos()
-        { 
+        {
+            Console.Clear();
+            Console.WriteLine("--- EQUIPOS INCOMPLETOS ---");
 
+            if (!HayEquipos()) return;
+
+            bool hayIncompletos = false;
+
+            foreach (Equipo eq in listaEquipos)
+            {
+                if (eq.Categoria == Categoria.Veteranos && eq.CantidadJugadores < 10)
+                {
+                    Console.WriteLine($"{eq.NombreCompleto} | Jugadores: {eq.CantidadJugadores}/10");
+                    hayIncompletos = true;
+                }
+                else if (eq.Categoria != Categoria.Veteranos && eq.CantidadJugadores < 9)
+                {
+                    Console.WriteLine($"{eq.NombreCompleto} | Jugadores: {eq.CantidadJugadores}/9");
+                    hayIncompletos = true;
+                }
+            }
+
+            if (!hayIncompletos)
+                Console.WriteLine("Todos los equipos cumplen el mínimo de jugadores requeridos.");
+
+            Console.WriteLine("\nPresione cualquier tecla para continuar...");
+            Console.ReadKey();
         }
 
         //-----------------------------------

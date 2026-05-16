@@ -64,6 +64,10 @@ namespace Solucion2
         //ALTA EQUIPO
         //-------------------------------------------
         //Metodo principal
+        /// <summary>
+        /// Permite registrar un nuevo equipo en el sistema. Solicita seleccionar un club existente
+        /// o ingresar uno nuevo, elige la categoría y genera automáticamente el nombre del equipo.
+        /// </summary>
         static void AltaEquipo()
         {
             string nombreClub = "";
@@ -112,6 +116,10 @@ namespace Solucion2
         //BAJA EQUIPO
         //-------------------------------------------
         //SE ELIMINA
+        /// <summary>
+        /// Permite eliminar un equipo del sistema. Solo se puede dar de baja si el equipo
+        /// no tiene jugadores asignados. Solicita confirmación antes de eliminar.
+        /// </summary>
         static void BajaEquipo()
         {
             Console.Clear();
@@ -162,6 +170,10 @@ namespace Solucion2
         //-------------------------------------------
         //MODIFICAR EQUIPO
         //-------------------------------------------
+        /// <summary>
+        /// Permite modificar un equipo existente. Ofrece la opción de eliminar un jugador
+        /// individual del equipo o eliminar todos los jugadores a la vez.
+        /// </summary>
         static void ModificarEquipo()
         {
             Console.Clear();
@@ -271,7 +283,11 @@ namespace Solucion2
         //-------------------------------------------
         //ALTA JUGADOR
         //-------------------------------------------
-
+        /// <summary>
+        /// Permite registrar un nuevo jugador en el sistema. Solicita y valida DNI, nombre,
+        /// apellido y edad. Determina la categoría automáticamente según la edad, permite
+        /// seleccionar el equipo correspondiente e indica si tiene seguro y afiliación.
+        /// </summary>
         static void AltaJugador()
         {
             //ingrersar los datos nombre, apellido
@@ -355,23 +371,132 @@ namespace Solucion2
             }
         }
 
+        //-------------------------------------------
+        //BAJA JUGADOR
+        //-------------------------------------------
+        static void BajaJugador()
+        {
+            Console.Clear();
+            Console.WriteLine("--- BAJA DE JUGADOR ---");
+
+            int dni = IngresarEntero("Ingrese DNI: ", 1, 99999999);
+            int indice = BuscarJugadorPorDNI(dni);
+
+            if (indice == -1)
+            {
+                Console.WriteLine("Jugador no encontrado.");
+                Console.WriteLine("\nPresione cualquier tecla para continuar...");
+                Console.ReadKey();
+                return;
+            }
+
+            // mostrar datos del jugador encontrado
+            Jugador j = listaJugadores[indice];
+            Console.WriteLine($"\nJugador encontrado: {j.Nombre} {j.Apellido} | Edad: {j.Edad}");
+
+            Console.WriteLine($"\nVa a eliminar al jugador {j.Nombre} {j.Apellido}");
+            if (Confirmar())
+            {
+                // quitar jugador de todos sus equipos
+                for (int i = 0; i < j.Equipos.Count; i++)
+                {
+                    QuitarEquipoDeJugador(dni, j.Equipos[i]);
+                    DecrementarJugadoresEquipo(j.Equipos[i]);
+                }
+
+                listaJugadores.RemoveAt(indice);
+                Console.WriteLine("Jugador eliminado exitosamente.");
+            }
+            else
+            {
+                Console.WriteLine("Baja cancelada.");
+            }
+
+            Console.WriteLine("\nPresione cualquier tecla para continuar...");
+            Console.ReadKey();
+        }
 
         //-------------------------------------------
         //MODIFICAR JUGADOR
         //-------------------------------------------
         //MODIFICAR edad, equipos, seguro y afiliacion
         //No puede estar en mas de club.
-        static void ModificarJugadores()
+        /// <summary>
+        /// Permite modificar los datos de un jugador existente: edad, equipos asignados,
+        /// seguro y afiliación. Un jugador no puede pertenecer a más de un club.
+        /// </summary>
+        static void ModificarJugador()
         {
+            Console.Clear();
+            Console.WriteLine("--- MODIFICAR JUGADOR ---");
 
+            int dni = IngresarEntero("Ingrese DNI: ", 1, 99999999);
+            int indice = BuscarJugadorPorDNI(dni);
 
+            if (indice == -1)
+            {
+                Console.WriteLine("Jugador no encontrado.");
+                Console.WriteLine("\nPresione cualquier tecla para continuar...");
+                Console.ReadKey();
+                return;
+            }
+
+            Jugador j = listaJugadores[indice];
+            Console.WriteLine($"\nJugador encontrado: {j.Nombre} {j.Apellido} | Edad: {j.Edad}");
+            if (j.Seguro)
+                Console.WriteLine("Seguro: SI");
+            else
+                Console.WriteLine("Seguro: NO");
+            if (j.Afiliacion)
+                Console.WriteLine("Afiliacion: SI");
+            else
+                Console.WriteLine("Afiliacion: NO");
+
+            Console.WriteLine("\n¿Qué desea modificar?");
+            Console.WriteLine("1. Modificar Seguro");
+            Console.WriteLine("2. Modificar Afiliacion");
+            Console.WriteLine("3. Agregar equipo");
+            Console.WriteLine("-----------------");
+            Console.WriteLine("0. Volver al menu principal");
+
+            int opcion = SeleccionarOpcion(0, 3);
+
+            switch (opcion)
+            {
+                case 1:
+                    if (j.Seguro)
+                        Console.WriteLine("Seguro actual: SI");
+                    else
+                        Console.WriteLine("Seguro actual: NO");
+                    j.Seguro = Confirmar("¿Tiene seguro? (S/N): ");
+                    listaJugadores[indice] = j;
+                    Console.WriteLine("Seguro actualizado.");
+                    break;
+
+                case 2:
+                    if (j.Afiliacion)
+                        Console.WriteLine("Afiliacion actual: SI");
+                    else
+                        Console.WriteLine("Afiliacion actual: NO");
+                    j.Afiliacion = Confirmar("¿Tiene afiliación? (S/N): ");
+                    listaJugadores[indice] = j;
+                    Console.WriteLine("Afiliación actualizada.");
+                    break;
+
+                case 3:
+                    AgregarEquipoAJugador(indice);
+                    break;
+
+                case 0:
+                    Console.WriteLine("Volviendo al menú principal.");
+                    break;
+            }
+
+            Console.WriteLine("\nPresione cualquier tecla para continuar...");
+            Console.ReadKey();
         }
 
 
-        //-------------------------------------------
-        //BAJA JUGADOR
-        //-------------------------------------------
-        
 
         //-----------------------------------
         //METODOS AUXILIARES
@@ -380,16 +505,20 @@ namespace Solucion2
         //
 
         //Auxiliar para confirmar
-        static bool Confirmar()
+        /// <summary>
+        /// Solicita confirmación al usuario mediante S/N antes de ejecutar una acción crítica.
+        /// </summary>
+        /// <returns>True si el usuario confirmó con S, false si ingresó N</returns>
+        static bool Confirmar(string mensaje)
         {
             string input = "";
             do
             {
-                Console.Write("¿Confirma? (S/N): ");
+                Console.Write(mensaje);
                 input = Console.ReadLine().ToUpper();
 
                 if (input != "S" && input != "N")
-                    Console.WriteLine("Error: ingrese S o N.");
+                Console.WriteLine("Error: ingrese S o N.");
 
             } while (input != "S" && input != "N");
 
@@ -397,6 +526,13 @@ namespace Solucion2
         }
 
         //Auxiliar para seleccionar opcion numerica
+        /// <summary>
+        /// Solicita al usuario que ingrese una opción numérica dentro de un rango válido.
+        /// Repite la solicitud hasta recibir un valor correcto.
+        /// </summary>
+        /// <param name="min">Valor mínimo aceptado</param>
+        /// <param name="max">Valor máximo aceptado</param>
+        /// <returns>Opción numérica seleccionada por el usuario</returns>
         static int SeleccionarOpcion(int min, int max)
         {
             int seleccion = 0;
@@ -416,6 +552,12 @@ namespace Solucion2
         }
 
         //Auxiliar ingreso de string
+        /// <summary>
+        /// Solicita al usuario el ingreso de una cadena de texto no vacía.
+        /// Repite la solicitud si el campo queda vacío.
+        /// </summary>
+        /// <param name="mensaje">Texto que se muestra al usuario como indicación</param>
+        /// <returns>Cadena ingresada por el usuario en mayúsculas</returns>
         static string IngresarString(string mensaje)
         {
             string input = "";
@@ -433,6 +575,14 @@ namespace Solucion2
         }
 
         //Auxiliar para ingresar y validar enteros pasando max y minimo para usarlo en diferentes lugares
+        /// <summary>
+        /// Solicita al usuario el ingreso de un número entero dentro de un rango definido.
+        /// Valida que sea un número y que esté dentro del mínimo y máximo indicados.
+        /// </summary>
+        /// <param name="mensaje">Texto que se muestra al usuario como indicación</param>
+        /// <param name="min">Valor mínimo aceptado</param>
+        /// <param name="max">Valor máximo aceptado</param>
+        /// <returns>Entero válido ingresado por el usuario</returns>
         static int IngresarEntero(string mensaje, int min, int max)
         {
             int valor = 0;
@@ -453,7 +603,9 @@ namespace Solucion2
         }
 
         //Auxiliar para mostrar los clubes enlistados
-
+        /// <summary>
+        /// Muestra por consola la lista numerada de todos los clubes registrados en el sistema.
+        /// </summary>
         static void MostrarClubes()
         {
             for (int i = 0; i < listaClubes.Count; i++)
@@ -462,6 +614,10 @@ namespace Solucion2
             }
         }
 
+        /// <summary>
+        /// Muestra los clubes disponibles y permite al usuario seleccionar uno de la lista.
+        /// </summary>
+        /// <returns>Nombre del club seleccionado</returns>
         static string ElegirClubExistente()
         {
             MostrarClubes();
@@ -469,6 +625,10 @@ namespace Solucion2
             return listaClubes[seleccion - 1];
         }
 
+        /// <summary>
+        /// Muestra las categorías disponibles y permite al usuario seleccionar una.
+        /// </summary>
+        /// <returns>Categoría seleccionada por el usuario</returns>
         static Categoria SeleccionarCategoria()
         {
             Console.WriteLine("\nCategorías disponibles:");
@@ -482,6 +642,10 @@ namespace Solucion2
             return (Categoria)(opcion - 1);
         }
 
+        /// <summary>
+        /// Solicita el nombre de un nuevo club, pide confirmación y lo agrega a la lista de clubes.
+        /// </summary>
+        /// <returns>Nombre del nuevo club ingresado</returns>
         static string IngresarNuevoClub()
         {
             string nombreClub = "";
@@ -541,6 +705,10 @@ namespace Solucion2
         }
 
         //Auxiliar eliminar equipo de un jugador
+        /// <summary>
+        /// Quita la referencia a un equipo de la lista de equipos de un jugador, buscándolo por DNI.
+        /// </summary>
+        /// <param name="DNI">DNI del jugador al que se le quitará el equipo</param>
         static void QuitarEquipoDeJugador(int DNI, string nombreEquipo)
         {
             for (int i = 0; i < listaJugadores.Count; i++)
@@ -554,6 +722,11 @@ namespace Solucion2
         }
 
         //Axiliar para decrementar en uno cantidad de jugadores en un equipo
+        /// <summary>
+        /// Decrementa en uno el contador de jugadores del equipo indicado.
+        /// Realiza una copia de la estructura para poder modificarla y la sobreescribe en la lista.
+        /// </summary>
+        /// <param name="nombreEquipo">Nombre del equipo cuyo contador se decrementará</param>
         static void DecrementarJugadoresEquipo(string nombreEquipo)
         {
             for (int i = 0; i < listaEquipos.Count; i++)
@@ -572,6 +745,11 @@ namespace Solucion2
             }
         }
         //Axiliar para incrementar en uno cantidad de jugadores en un equipo
+        /// <summary>
+        /// Incrementa en uno el contador de jugadores del equipo indicado.
+        /// Realiza una copia de la estructura para poder modificarla y la sobreescribe en la lista.
+        /// </summary>
+        /// <param name="nombreEquipo">Nombre del equipo cuyo contador se incrementará</param>
         static void IncrementarJugadoresEquipo(string nombreEquipo)
         {
             for (int i = 0; i < listaEquipos.Count; i++)
@@ -587,6 +765,11 @@ namespace Solucion2
         }
 
         //Auxiliar que no este cargado ya ese DNI
+        /// <summary>
+        /// Verifica si ya existe un jugador registrado con el DNI indicado.
+        /// </summary>
+        /// <param name="dni">DNI a verificar</param>
+        /// <returns>True si el DNI ya está registrado, false si no existe</returns>
         static bool DNIExiste(int dni)
         {
             foreach (Jugador j in listaJugadores)
@@ -600,6 +783,13 @@ namespace Solucion2
         //Obtenemos la categoria con la edad
         //Aca definimos entonces que cuando decimos hasta es que si tioene 15 y 9 meses juega pero
         //una vez cumplido 16 entra en siguiente categoria
+        /// <summary>
+        /// Determina la categoría correspondiente a un jugador según su edad.
+        /// Infantiles: menores de 13 | Cadetes: 13 a 15 | Juveniles: 16 a 17 |
+        /// Primera: 18 a 34 | Veteranos: 35 o más.
+        /// </summary>
+        /// <param name="edad">Edad del jugador</param>
+        /// <returns>Categoría correspondiente según la edad</returns>
         static Categoria ObtenerCategoriaPorEdad(int edad)
         {
             if (edad < 13)
@@ -616,6 +806,13 @@ namespace Solucion2
 
 
         //Seleccionar equipo segun club y categoria
+        /// <summary>
+        /// Filtra y muestra los equipos disponibles de un club para una categoría específica,
+        /// y permite al usuario seleccionar uno.
+        /// </summary>
+        /// <param name="nombreClub">Nombre del club a filtrar</param>
+        /// <param name="categoria">Categoría por la que se filtrarán los equipos</param>
+        /// <returns>Nombre del equipo seleccionado, o cadena vacía si no hay equipos disponibles</returns>
         static string SeleccionarEquipoPorClubYCategoria(string nombreClub, Categoria categoria)
         {
             List<Equipo> equiposFiltrados = new List<Equipo>();
@@ -639,6 +836,11 @@ namespace Solucion2
         }
 
         //Auxiliar para buscar jugador por dni
+        /// <summary>
+        /// Busca un jugador en la lista por su DNI y devuelve su índice.
+        /// </summary>
+        /// <param name="dni">DNI del jugador a buscar</param>
+        /// <returns>Índice del jugador en la lista, o -1 si no se encuentra</returns>
         static int BuscarJugadorPorDNI(int dni)
         {
             for (int i = 0; i < listaJugadores.Count; i++)
@@ -648,6 +850,41 @@ namespace Solucion2
             }
             return -1;
         }
+
+
+
+        //auxliar para agregar equipo a jugador
+        static void AgregarEquipoAJugador(int indice)
+        {
+            Jugador j = listaJugadores[indice];
+
+            Categoria categoriaJugador = ObtenerCategoriaPorEdad(j.Edad);
+            Console.WriteLine($"\nCategoría del jugador: {categoriaJugador}");
+
+            string nombreClub = "";
+            if (j.Equipos.Count > 0)
+                nombreClub = ObtenerClubDeEquipo(j.Equipos[0]);
+            else
+                nombreClub = ElegirClubExistente();
+
+            string nombreEquipo = SeleccionarEquipoPorClubYCategoria(nombreClub, categoriaJugador);
+            if (nombreEquipo == "")
+            {
+                Console.WriteLine("No hay equipos disponibles para esta categoría.");
+                return;
+            }
+
+            if (j.Equipos.Contains(nombreEquipo))
+                Console.WriteLine("El jugador ya pertenece a ese equipo.");
+            else
+            {
+                listaJugadores[indice].Equipos.Add(nombreEquipo);
+                IncrementarJugadoresEquipo(nombreEquipo);
+                Console.WriteLine($"Jugador agregado a {nombreEquipo} exitosamente.");
+            }
+        }
+
+
 
         //--------------------------------------
         //MENU PRINCIPAL

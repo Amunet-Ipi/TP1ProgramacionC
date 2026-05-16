@@ -67,6 +67,8 @@ namespace Solucion2
         /// </summary>
         static void AltaEquipo()
         {
+            Console.Clear();
+            Console.WriteLine("--- ALTA EQUIPO ---");
             string nombreClub = "";
 
             if (listaClubes.Count == 0)
@@ -649,7 +651,8 @@ namespace Solucion2
             Console.Clear();
             Console.WriteLine("--- JUGADOR MÁS JOVEN ---");
 
-            if (!HayJugadores()) return;
+            if (!HayJugadores()) 
+                return;
 
             int edadMin = ObtenerEdadMinima();
 
@@ -669,13 +672,9 @@ namespace Solucion2
             Console.Clear();
             Console.WriteLine("--- JUGADOR MÁS VIEJO ---");
 
-            if (listaJugadores.Count == 0)
-            {
-                Console.WriteLine("No hay jugadores registrados.");
-                Console.WriteLine("\nPresione cualquier tecla para continuar...");
-                Console.ReadKey();
+            if (!HayJugadores()) 
                 return;
-            }
+
 
             int edadMax = ObtenerEdadMaxima();
 
@@ -687,6 +686,20 @@ namespace Solucion2
 
             Console.WriteLine("\nPresione cualquier tecla para continuar...");
             Console.ReadKey();
+        }
+
+        //CANTIDAD DE JUGADORES POR CATEGORIA
+        static void CantidadPorCategoria()
+        {  
+            Console.Clear();
+            Console.WriteLine("--- CANTIDAD DE JUGADORES POR CATEGORIA ---");
+
+            if (!HayJugadores())
+                return;
+            foreach()
+
+
+
         }
 
         //-----------------------------------
@@ -726,18 +739,18 @@ namespace Solucion2
         /// <returns>Opción numérica seleccionada por el usuario</returns>
         static int SeleccionarOpcion(int min, int max)
         {
-            int seleccion = 0;
+            int seleccion;
+            bool valido;
+
             do
             {
                 Console.Write("\nSeleccione una opción: ");
-                bool esNumero = int.TryParse(Console.ReadLine(), out seleccion);
+                valido = int.TryParse(Console.ReadLine(), out seleccion) && seleccion >= min && seleccion <= max;
 
-                if (!esNumero)
-                    Console.WriteLine("Error: ingrese un número.");
-                else if (seleccion < min || seleccion > max)
-                    Console.WriteLine("Error: opción inválida.");
+                if (!valido)
+                    Console.WriteLine($"Error: ingrese un número entre {min} y {max}.");
 
-            } while (seleccion < min || seleccion > max);
+            } while (!valido);
 
             return seleccion;
         }
@@ -1215,7 +1228,7 @@ namespace Solucion2
                     case 10: JugadorMasJoven(); break;
                     case 11: JugadorMasViejo(); break;
                     //case 12: PromedioEdad(); break;
-                    //case 13: CantidadPorCategoria(); break;
+                    case 13: CantidadPorCategoria(); break;
                     //case 14: EquiposIncompletos(); break;
                     case 0: Console.WriteLine("\nSaliendo..."); break;
                 }

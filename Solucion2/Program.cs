@@ -49,15 +49,11 @@ namespace Solucion2
 
 
         //--------------
-        //Definimos los métodos
-
+        //Definimos los métodos principeles primero
         //La documentación va directo antes de los metodos
-
         //Usariamos static void, que no devuelve nada en sí para el "main" de cada opcion del menu del sistema
 
-
-
-        //----------------------------------------------
+        //-------------------------------------------
         //
         //EQUIPOS 
         //
@@ -150,7 +146,7 @@ namespace Solucion2
                     else
                     {
                         Console.WriteLine($"\nVa a eliminar el equipo: {nombreEquipoElegido}");
-                        if (Confirmar())
+                        if (Confirmar("¿Confirma la eliminación? S/N"))
                         {
                             listaEquipos.RemoveAt(i);
                             Console.WriteLine("Equipo eliminado exitosamente.");
@@ -231,7 +227,7 @@ namespace Solucion2
                     Jugador jugadorElegido = jugadoresDelEquipo[seleccion - 1];
 
                     Console.WriteLine($"\nVa a eliminar a {jugadorElegido.Nombre} {jugadorElegido.Apellido} del equipo {nombreEquipoElegido}");
-                    if (Confirmar())
+                    if (Confirmar("¿Confirma la eliminación? S/N"))
                     {
                         QuitarEquipoDeJugador(jugadorElegido.DNI, nombreEquipoElegido);
 
@@ -249,7 +245,7 @@ namespace Solucion2
             else if (opcion == 2)
             {
                 Console.WriteLine($"\nVa a eliminar todos los jugadores del equipo {nombreEquipoElegido}");
-                if (Confirmar())
+                if (Confirmar("¿Confirma la eliminación? S/N"))
                 {
                     for (int i = 0; i < listaJugadores.Count; i++)
                     {
@@ -281,9 +277,24 @@ namespace Solucion2
             Console.WriteLine("\nPresione cualquier tecla para continuar...");
             Console.ReadKey();
         }
+
+        //-------------------------------------------
+        //
+        //JUGADORES
+        //
+        //-------------------------------------------
         //-------------------------------------------
         //ALTA JUGADOR
         //-------------------------------------------
+        //ingrersar los datos nombre, apellido
+        //DNI validar no este duplicado
+        //edad
+        //matchear con categoria
+        //clubes filtrados con equipos de esta categoria
+        //seleccion de equipo
+        //seguro
+        //afiliado
+
         /// <summary>
         /// Permite registrar un nuevo jugador en el sistema. Solicita y valida DNI, nombre,
         /// apellido y edad. Determina la categoría automáticamente según la edad, permite
@@ -291,86 +302,75 @@ namespace Solucion2
         /// </summary>
         static void AltaJugador()
         {
-            //ingrersar los datos nombre, apellido
-            //DNI validar no este duplicado
-            //edad
-            //matchear con categoria
-            //clubes filtrados con equipos de esta categoria
-            //seleccion de equipo
-            //seguro
-            //afiliado
+            Console.Clear();
+            Console.WriteLine("--- ALTA DE JUGADOR ---");
 
-            static void AltaJugador()
+            if (listaEquipos.Count == 0)
             {
-                Console.Clear();
-                Console.WriteLine("--- ALTA DE JUGADOR ---");
-
-                if (listaEquipos.Count == 0)
-                {
-                    Console.WriteLine("No hay equipos registrados, debe dar de alta un equipo primero.");
-                    Console.WriteLine("\nPresione cualquier tecla para continuar...");
-                    Console.ReadKey();
-                    return;
-                }
-
-                // ingreso y validacion de DNI
-                int dni = IngresarEntero("Ingrese DNI: ", 1, 99999999);
-                if (DNIExiste(dni))
-                {
-                    Console.WriteLine("Error: el DNI ya está registrado.");
-                    Console.WriteLine("\nPresione cualquier tecla para continuar...");
-                    Console.ReadKey();
-                    return;
-                }
-
-                // ingreso de datos personales
-                string nombre = IngresarString("Ingrese Nombre: ");
-                string apellido = IngresarString("Ingrese Apellido: ");
-                int edad = IngresarEntero("Ingrese Edad: ", 1, 99);
-
-                // obtener categoria por edad
-                Categoria categoriaJugador = ObtenerCategoriaPorEdad(edad);
-                Console.WriteLine($"Categoría correspondiente: {categoriaJugador}");
-
-                // elegir club y equipo
-                Console.WriteLine("\nSeleccione el club:");
-                string nombreClub = ElegirClubExistente();
-
-                string nombreEquipo = SeleccionarEquipoPorClubYCategoria(nombreClub, categoriaJugador);
-                if (nombreEquipo == "")
-                {
-                    Console.WriteLine("\nPresione cualquier tecla para continuar...");
-                    Console.ReadKey();
-                    return;
-                }
-
-                // seguro y afiliacion
-                Console.Write("¿Tiene seguro? ");
-                bool seguro = Confirmar();
-
-                Console.Write("¿Tiene afiliación? ");
-                bool afiliacion = Confirmar();
-
-                // crear jugador
-                Jugador j;
-                j.DNI = dni;
-                j.Nombre = nombre;
-                j.Apellido = apellido;
-                j.Edad = edad;
-                j.Equipos = new List<string>();
-                j.Seguro = seguro;
-                j.Afiliacion = afiliacion;
-
-                // agregar jugador y asignar equipo
-                listaJugadores.Add(j);
-                listaJugadores[listaJugadores.Count - 1].Equipos.Add(nombreEquipo);
-                IncrementarJugadoresEquipo(nombreEquipo);
-
-                Console.WriteLine($"\nJugador {nombre} {apellido} registrado exitosamente en {nombreEquipo}.");
+                Console.WriteLine("No hay equipos registrados, debe dar de alta un equipo primero.");
                 Console.WriteLine("\nPresione cualquier tecla para continuar...");
                 Console.ReadKey();
+                return;
             }
+
+            // ingreso y validacion de DNI
+            int dni = IngresarEntero("Ingrese DNI: ", 1, 99999999);
+            if (DNIExiste(dni))
+            {
+                Console.WriteLine("Error: el DNI ya está registrado.");
+                Console.WriteLine("\nPresione cualquier tecla para continuar...");
+                Console.ReadKey();
+                return;
+            }
+
+            // ingreso de datos personales
+            string nombre = IngresarString("Ingrese Nombre: ");
+            string apellido = IngresarString("Ingrese Apellido: ");
+            int edad = IngresarEntero("Ingrese Edad: ", 1, 99);
+
+            // obtener categoria por edad
+            Categoria categoriaJugador = ObtenerCategoriaPorEdad(edad);
+            Console.WriteLine($"Categoría correspondiente: {categoriaJugador}");
+
+            // elegir club y equipo
+            Console.WriteLine("\nSeleccione el club:");
+            string nombreClub = ElegirClubExistente();
+
+            string nombreEquipo = SeleccionarEquipoPorClubYCategoria(nombreClub, categoriaJugador);
+            if (nombreEquipo == "")
+            {
+                Console.WriteLine("\nPresione cualquier tecla para continuar...");
+                Console.ReadKey();
+                return;
+            }
+
+            // seguro y afiliacion
+            bool seguro = Confirmar("¿Tiene seguro? S/N:");
+
+            bool afiliacion = Confirmar("¿Tiene afiliación? S/N");
+
+            // crear jugador
+            Jugador j;
+            j.DNI = dni;
+            j.Nombre = nombre;
+            j.Apellido = apellido;
+            j.Edad = edad;
+            j.Equipos = new List<string>();
+            j.Seguro = seguro;
+            j.Afiliacion = afiliacion;
+
+            // agregar jugador y asignar equipo
+            listaJugadores.Add(j);
+            listaJugadores[listaJugadores.Count - 1].Equipos.Add(nombreEquipo);
+            IncrementarJugadoresEquipo(nombreEquipo);
+
+            Console.WriteLine($"\nJugador {nombre} {apellido} registrado exitosamente en {nombreEquipo}.");
+            Console.WriteLine("\nPresione cualquier tecla para continuar...");
+            Console.ReadKey();
         }
+
+
+
 
         //-------------------------------------------
         //BAJA JUGADOR
@@ -396,7 +396,7 @@ namespace Solucion2
             Console.WriteLine($"\nJugador encontrado: {j.Nombre} {j.Apellido} | Edad: {j.Edad}");
 
             Console.WriteLine($"\nVa a eliminar al jugador {j.Nombre} {j.Apellido}");
-            if (Confirmar())
+            if (Confirmar("¿Confirma la eliminación? S/N"))
             {
                 // quitar jugador de todos sus equipos
                 for (int i = 0; i < j.Equipos.Count; i++)
@@ -498,7 +498,9 @@ namespace Solucion2
         }
 
         //-------------------------------------------
+        //
         //LISTAS
+        //
         //-------------------------------------------
         //JUGADORES ASEGURADOS
 
@@ -619,7 +621,7 @@ namespace Solucion2
             string input = "";
             do
             {
-                Console.Write(mensaje);
+                Console.WriteLine(mensaje);
                 input = Console.ReadLine().ToUpper();
 
                 if (input != "S" && input != "N")
@@ -758,7 +760,7 @@ namespace Solucion2
             {
                 nombreClub = IngresarString("Ingrese el nombre del nuevo club: ");
                 Console.WriteLine($"El club a ingresar es: {nombreClub}");
-            } while (!Confirmar());
+            } while (!Confirmar("¿Confirma el ingreso? S/N"));
 
             listaClubes.Add(nombreClub);
             return nombreClub;
@@ -956,8 +958,6 @@ namespace Solucion2
             return -1;
         }
 
-
-
         //auxliar para agregar equipo a jugador
         static void AgregarEquipoAJugador(int indice)
         {
@@ -989,7 +989,18 @@ namespace Solucion2
             }
         }
 
-
+        /// <summary>
+        /// Obtiene el nombre del club de un equipo dado su nombre completo
+        /// </summary>
+        static string ObtenerClubDeEquipo(string nombreEquipo)
+        {
+            for (int i = 0; i < listaEquipos.Count; i++)
+            {
+                if (listaEquipos[i].NombreCompleto == nombreEquipo)
+                    return listaEquipos[i].NombreClub;
+            }
+            return "";
+        }
 
 
 
@@ -1047,11 +1058,11 @@ namespace Solucion2
                     case 7: ListarAsegurados(); break;
                     case 8: ListarPorEdad(); break;
                     case 9: ListarPorCategoria(); break;
-                    case 10: JugadorMasJoven(); break;
-                    case 11: JugadorMasViejo(); break;
-                    case 12: PromedioEdad(); break;
-                    case 13: CantidadPorCategoria(); break;
-                    case 14: EquiposIncompletos(); break;
+                    //case 10: JugadorMasJoven(); break;
+                    //case 11: JugadorMasViejo(); break;
+                    //case 12: PromedioEdad(); break;
+                    //case 13: CantidadPorCategoria(); break;
+                    //case 14: EquiposIncompletos(); break;
                     case 0: Console.WriteLine("\nSaliendo..."); break;
                 }
 

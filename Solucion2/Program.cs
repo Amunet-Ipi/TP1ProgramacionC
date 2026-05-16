@@ -649,7 +649,8 @@ namespace Solucion2
             Console.Clear();
             Console.WriteLine("--- JUGADOR MÁS JOVEN ---");
 
-            if (!HayJugadores()) return;
+            if (!HayJugadores()) 
+                return;
 
             int edadMin = ObtenerEdadMinima();
 
@@ -669,13 +670,9 @@ namespace Solucion2
             Console.Clear();
             Console.WriteLine("--- JUGADOR MÁS VIEJO ---");
 
-            if (listaJugadores.Count == 0)
-            {
-                Console.WriteLine("No hay jugadores registrados.");
-                Console.WriteLine("\nPresione cualquier tecla para continuar...");
-                Console.ReadKey();
+            if (!HayJugadores()) 
                 return;
-            }
+
 
             int edadMax = ObtenerEdadMaxima();
 
@@ -687,6 +684,20 @@ namespace Solucion2
 
             Console.WriteLine("\nPresione cualquier tecla para continuar...");
             Console.ReadKey();
+        }
+
+        //CANTIDAD DE JUGADORES POR CATEGORIA
+        static void CantidadPorCategoria()
+        {  
+            Console.Clear();
+            Console.WriteLine("--- CANTIDAD DE JUGADORES POR CATEGORIA ---");
+
+            if (!HayJugadores())
+                return;
+            foreach()
+
+
+
         }
 
         //-----------------------------------
@@ -733,8 +744,6 @@ namespace Solucion2
                 bool esNumero = int.TryParse(Console.ReadLine(), out seleccion);
 
                 if (!esNumero)
-                    Console.WriteLine("Error: ingrese un número.");
-                else if (seleccion < min || seleccion > max)
                     Console.WriteLine("Error: opción inválida.");
 
             } while (seleccion < min || seleccion > max);
@@ -1215,7 +1224,7 @@ namespace Solucion2
                     case 10: JugadorMasJoven(); break;
                     case 11: JugadorMasViejo(); break;
                     //case 12: PromedioEdad(); break;
-                    //case 13: CantidadPorCategoria(); break;
+                    case 13: CantidadPorCategoria(); break;
                     //case 14: EquiposIncompletos(); break;
                     case 0: Console.WriteLine("\nSaliendo..."); break;
                 }

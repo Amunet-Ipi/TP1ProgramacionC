@@ -34,18 +34,15 @@ namespace Solucion2
         public string Nombre;
         public string Apellido;
         public int Edad;
-        public List<Equipo> Equipos;
+        public List<string> Equipos;
         public bool Seguro;
         public bool Afiliacion;
-        //No utilizamos equipos asignados ya que cada jugador
-        //puede estar en más de un equipo, y usar listas dentro
-        //de una estructura puede traer conflictos ya que es un tipo por referencia
-        // y la estructura es un tipo por valor
     }
     
      //declaramos la lista de equipos donde se guardarán, fuera del main para que los metodos y como static para q los metodos puedan acceder
     static List<string> listaClubes = new List<string>();
     static List<Equipo> listaEquipos = new List<Equipo>();
+    static List<Jugador> listaJugadores = new List<Jugador>();
 
     internal class Program
     {
@@ -109,73 +106,12 @@ namespace Solucion2
             Console.WriteLine("\nPresione cualquier tecla para continuar...");
             Console.ReadKey();
         }
-        //-------------------------------------------
-        //MODIFICAR EQUIPO
-        //-------------------------------------------
-        //Aca tenemos que definir que modificar, si modificamos la categoria podemos generar incompatibilidad de edades
-        //por ahora podemos dejar solo nombre de club, que modifca nombre de equipo? 
-        //cantidad de jugadores, que implica
-        //Considerando que los nombres se asignan automaticaticamente, no se deberian poder modificar.
-        //Dejamos que solo se puedan modificar lo jugadores?
-        //baja de jugadores del equipo
-         //mostrar los jugadores de equipo
-         //elegir cual eleminiar del equipo
-         //eliminar el equipo de la lista de equipos del jugador y decrementar cantidad de jugadores
-         //dar la opcion de borrar todos los jugadores
-        
-
-        
-
-
 
 
         //-------------------------------------------
         //BAJA EQUIPO
         //-------------------------------------------
         //SE ELIMINA
-        static void BajaEquipo()
-        {
-            if (listaClub.Count > 0)
-            {
-                SeleccionarEquipoPorClub()
-            }
-            
-
-
-
-        }
-
-        //-------------------------------------------
-        //ALTA JUGADOR
-        //-------------------------------------------
-
-        static void AltaJugador()
-        {
-            //ingrersar los datos nombre, apellido
-            //DNI validar no este duplicado
-            //edad
-            //matchear con categoria
-            //clubes filtrados con equipos de esta categoria
-            //seleccion de equipo
-            //seguro
-            //afiliado
-        }
-
-
-        //-------------------------------------------
-        //MODIFICAR JUGADOR
-        //-------------------------------------------
-        //MODIFICAR edad, equipos, seguro y afiliacion
-        //No puede estar en mas de club.
-        static void ModificarJugadores()
-        {
-
-        }
-
-
-        //-------------------------------------------
-        //BAJA JUGADOR
-        //-------------------------------------------
         static void BajaEquipo()
         {
             Console.Clear();
@@ -223,6 +159,219 @@ namespace Solucion2
             Console.ReadKey();
         }
 
+        //-------------------------------------------
+        //MODIFICAR EQUIPO
+        //-------------------------------------------
+        static void ModificarEquipo()
+        {
+            Console.Clear();
+            Console.WriteLine("--- MODIFICAR EQUIPO ---");
+
+            if (listaEquipos.Count == 0)
+            {
+                Console.WriteLine("No hay equipos registrados.");
+                Console.WriteLine("\nPresione cualquier tecla para continuar...");
+                Console.ReadKey();
+                return;
+            }
+            //selecciona equipo
+            string nombreEquipoElegido = SeleccionarEquipoPorClub();
+
+            //se decide que modificacion realizara
+            Console.WriteLine("\n¿Qué desea modificar?");
+            Console.WriteLine("1. Eliminar un jugador del equipo");
+            Console.WriteLine("2. Eliminar todos los jugadores del equipo");
+
+            int opcion = SeleccionarOpcion(1, 2);
+            //Si desea eliminar un jugador de un equipo
+            if (opcion == 1)
+            {
+                //primero, busco si hay jugadores de ese equipo, recorriendo la lista de jugadores y si hay guardo en una lista temporal
+                //genero una lista donde voy a guardar temporalmente los jugadores del equipo
+                List<Jugador> jugadoresDelEquipo = new List<Jugador>();
+                for (int i = 0; i < listaJugadores.Count; i++)
+                {
+                    if (listaJugadores[i].Equipos.Contains(nombreEquipoElegido))
+                    {
+                        jugadoresDelEquipo.Add(listaJugadores[i]);
+                        //MOSTRAMOS LOS JUGADORES, a medida que vaya printeando e incorporando jugador a la lista va imprimiento el numero
+                        Console.WriteLine($"{jugadoresDelEquipo.Count}. {listaJugadores[i].Nombre} {listaJugadores[i].Apellido}");
+                    }
+                }
+
+                //si no hay jugadores en el equipo, avisa
+                if (jugadoresDelEquipo.Count == 0)
+                {
+                    Console.WriteLine("El equipo no tiene jugadores asignados.");
+                }
+
+                //-----------------
+                //Se me ocurre que aca se podria incorporar si desea asignar un jugador cargado, solicitando que ingrese DNI
+                //SI HAY TIEMPO PODEMOS INCORPORARLO
+                //-----------------
+
+                // 
+                else
+                {
+                    //ya se mostraron, permitimos elegir entre los qwue se mostraron
+                    int seleccion = SeleccionarOpcion(1, jugadoresDelEquipo.Count);
+                    Jugador jugadorElegido = jugadoresDelEquipo[seleccion - 1];
+
+                    Console.WriteLine($"\nVa a eliminar a {jugadorElegido.Nombre} {jugadorElegido.Apellido} del equipo {nombreEquipoElegido}");
+                    if (Confirmar())
+                    {
+                        QuitarEquipoDeJugador(jugadorElegido.DNI, nombreEquipoElegido);
+
+                        // decrementar cantidad jugadores del equipo
+                        DecrementarJugadoresEquipo(nombreEquipoElegido);
+
+                        Console.WriteLine("Jugador eliminado del equipo exitosamente.");
+                    }
+                    else
+                    {
+                        Console.WriteLine("Modificación cancelada.");
+                    }
+                }
+            }
+            else if (opcion == 2)
+            {
+                Console.WriteLine($"\nVa a eliminar todos los jugadores del equipo {nombreEquipoElegido}");
+                if (Confirmar())
+                {
+                    for (int i = 0; i < listaJugadores.Count; i++)
+                    {
+                        if (listaJugadores[i].Equipos.Contains(nombreEquipoElegido))
+                        {
+                            QuitarEquipoDeJugador(listaJugadores[i].DNI, nombreEquipoElegido);
+                        }
+                    }
+
+                    // poner cantidad jugadores en 0
+                    for (int i = 0; i < listaEquipos.Count; i++)
+                    {
+                        if (listaEquipos[i].NombreCompleto == nombreEquipoElegido)
+                        {
+                            Equipo eq = listaEquipos[i];
+                            eq.CantidadJugadores = 0;
+                            listaEquipos[i] = eq;
+                            break;
+                        }
+                    }
+                    Console.WriteLine("Todos los jugadores eliminados del equipo exitosamente.");
+                }
+                else
+                {
+                    Console.WriteLine("Modificación cancelada.");
+                }
+            }
+
+            Console.WriteLine("\nPresione cualquier tecla para continuar...");
+            Console.ReadKey();
+        }
+        //-------------------------------------------
+        //ALTA JUGADOR
+        //-------------------------------------------
+
+        static void AltaJugador()
+        {
+            //ingrersar los datos nombre, apellido
+            //DNI validar no este duplicado
+            //edad
+            //matchear con categoria
+            //clubes filtrados con equipos de esta categoria
+            //seleccion de equipo
+            //seguro
+            //afiliado
+
+            static void AltaJugador()
+            {
+                Console.Clear();
+                Console.WriteLine("--- ALTA DE JUGADOR ---");
+
+                if (listaEquipos.Count == 0)
+                {
+                    Console.WriteLine("No hay equipos registrados, debe dar de alta un equipo primero.");
+                    Console.WriteLine("\nPresione cualquier tecla para continuar...");
+                    Console.ReadKey();
+                    return;
+                }
+
+                // ingreso y validacion de DNI
+                int dni = IngresarEntero("Ingrese DNI: ", 1, 99999999);
+                if (DNIExiste(dni))
+                {
+                    Console.WriteLine("Error: el DNI ya está registrado.");
+                    Console.WriteLine("\nPresione cualquier tecla para continuar...");
+                    Console.ReadKey();
+                    return;
+                }
+
+                // ingreso de datos personales
+                string nombre = IngresarString("Ingrese Nombre: ");
+                string apellido = IngresarString("Ingrese Apellido: ");
+                int edad = IngresarEntero("Ingrese Edad: ", 1, 99);
+
+                // obtener categoria por edad
+                Categoria categoriaJugador = ObtenerCategoriaPorEdad(edad);
+                Console.WriteLine($"Categoría correspondiente: {categoriaJugador}");
+
+                // elegir club y equipo
+                Console.WriteLine("\nSeleccione el club:");
+                string nombreClub = ElegirClubExistente();
+
+                string nombreEquipo = SeleccionarEquipoPorClubYCategoria(nombreClub, categoriaJugador);
+                if (nombreEquipo == "")
+                {
+                    Console.WriteLine("\nPresione cualquier tecla para continuar...");
+                    Console.ReadKey();
+                    return;
+                }
+
+                // seguro y afiliacion
+                Console.Write("¿Tiene seguro? ");
+                bool seguro = Confirmar();
+
+                Console.Write("¿Tiene afiliación? ");
+                bool afiliacion = Confirmar();
+
+                // crear jugador
+                Jugador j;
+                j.DNI = dni;
+                j.Nombre = nombre;
+                j.Apellido = apellido;
+                j.Edad = edad;
+                j.Equipos = new List<string>();
+                j.Seguro = seguro;
+                j.Afiliacion = afiliacion;
+
+                // agregar jugador y asignar equipo
+                listaJugadores.Add(j);
+                listaJugadores[listaJugadores.Count - 1].Equipos.Add(nombreEquipo);
+                IncrementarJugadoresEquipo(nombreEquipo);
+
+                Console.WriteLine($"\nJugador {nombre} {apellido} registrado exitosamente en {nombreEquipo}.");
+                Console.WriteLine("\nPresione cualquier tecla para continuar...");
+                Console.ReadKey();
+            }
+        }
+
+
+        //-------------------------------------------
+        //MODIFICAR JUGADOR
+        //-------------------------------------------
+        //MODIFICAR edad, equipos, seguro y afiliacion
+        //No puede estar en mas de club.
+        static void ModificarJugadores()
+        {
+
+
+        }
+
+
+        //-------------------------------------------
+        //BAJA JUGADOR
+        //-------------------------------------------
+        
 
         //-----------------------------------
         //METODOS AUXILIARES
@@ -266,6 +415,43 @@ namespace Solucion2
             return seleccion;
         }
 
+        //Auxiliar ingreso de string
+        static string IngresarString(string mensaje)
+        {
+            string input = "";
+            do
+            {
+                Console.Write(mensaje);
+                input = Console.ReadLine().ToUpper();
+
+                if (input == "")
+                    Console.WriteLine("Error: no puede estar vacío.");
+
+            } while (input == "");
+
+            return input;
+        }
+
+        //Auxiliar para ingresar y validar enteros pasando max y minimo para usarlo en diferentes lugares
+        static int IngresarEntero(string mensaje, int min, int max)
+        {
+            int valor = 0;
+            bool esNumero;
+            do
+            {
+                Console.Write(mensaje);
+                esNumero = int.TryParse(Console.ReadLine(), out valor);
+
+                if (!esNumero)
+                    Console.WriteLine("Error: ingrese un número válido.");
+                else if (valor < min || valor > max)
+                    Console.WriteLine($"Error: debe ser entre {min} y {max}.");
+
+            } while (!esNumero || valor < min || valor > max);
+
+            return valor;
+        }
+
         //Auxiliar para mostrar los clubes enlistados
 
         static void MostrarClubes()
@@ -301,8 +487,7 @@ namespace Solucion2
             string nombreClub = "";
             do
             {
-                Console.Write("Ingrese el nombre del nuevo club: ");
-                nombreClub = Console.ReadLine();
+                nombreClub = IngresarString("Ingrese el nombre del nuevo club: ");
                 Console.WriteLine($"El club a ingresar es: {nombreClub}");
             } while (!Confirmar());
 
@@ -311,7 +496,12 @@ namespace Solucion2
         }
 
 
-
+        /// <summary>
+        /// Metodo que genera el nombre del equipo automaticamente
+        /// </summary>
+        /// <param name="nombreClub">Nombre del club al que pertenecera el equipo</param>
+        /// <param name="categoria">Categoria a la que va a pertenecer el equipo</param>
+        /// <returns>Nuevo Nombre de Equipo = Club + Cat + Letra</returns>
         static string GenerarNombreEquipo(string nombreClub, Categoria categoria)
         {
             int cantidadExistentes = 0;
@@ -350,12 +540,103 @@ namespace Solucion2
             return equiposDelClub[seleccionEquipo - 1].NombreCompleto;
         }
 
+        //Auxiliar eliminar equipo de un jugador
+        static void QuitarEquipoDeJugador(int DNI, string nombreEquipo)
+        {
+            for (int i = 0; i < listaJugadores.Count; i++)
+            {
+                if (listaJugadores[i].DNI == DNI)
+                {
+                    listaJugadores[i].Equipos.Remove(nombreEquipo);
+                    break; 
+                } 
+            }
+        }
+
+        //Axiliar para decrementar en uno cantidad de jugadores en un equipo
+        static void DecrementarJugadoresEquipo(string nombreEquipo)
+        {
+            for (int i = 0; i < listaEquipos.Count; i++)
+            {
+                //recorro lista de equipos para buscar el equipo que quiero modificar
+                if (listaEquipos[i].NombreCompleto == nombreEquipo)
+                {
+                    //ya que la estructura no permite modificar un valor, realizo una copia
+                    Equipo eq = listaEquipos[i];
+                    //decremento cantidad de jugagadores
+                    eq.CantidadJugadores--;
+                    //sobreescribo con la copia modificada
+                    listaEquipos[i] = eq;
+                    break;
+                }
+            }
+        }
+        //Axiliar para incrementar en uno cantidad de jugadores en un equipo
+        static void IncrementarJugadoresEquipo(string nombreEquipo)
+        {
+            for (int i = 0; i < listaEquipos.Count; i++)
+            {
+                if (listaEquipos[i].NombreCompleto == nombreEquipo)
+                {
+                    Equipo eq = listaEquipos[i];
+                    eq.CantidadJugadores++;
+                    listaEquipos[i] = eq;
+                    break;
+                }
+            }
+        }
+
+        //Auxiliar que no este cargado ya ese DNI
+        static bool DNIExiste(int dni)
+        {
+            foreach (Jugador j in listaJugadores)
+            {
+                if (j.DNI == dni)
+                    return true;
+            }
+            return false;
+        }
+
+        //Obtenemos la categoria con la edad
+        //Aca definimos entonces que cuando decimos hasta es que si tioene 15 y 9 meses juega pero
+        //una vez cumplido 16 entra en siguiente categoria
+        static Categoria ObtenerCategoriaPorEdad(int edad)
+        {
+            if (edad < 13)
+                return Categoria.Infantiles;
+            else if (edad >= 13 && edad < 16)
+                return Categoria.Cadetes;
+            else if (edad >= 16 && edad < 18)
+                return Categoria.Juveniles;
+            else if (edad >= 18 && edad <= 34)
+                return Categoria.Primera;
+            else
+                return Categoria.Veteranos;
+        }
 
 
+        //Seleccionar equipo segun club y categoria
+        static string SeleccionarEquipoPorClubYCategoria(string nombreClub, Categoria categoria)
+        {
+            List<Equipo> equiposFiltrados = new List<Equipo>();
+            for (int i = 0; i < listaEquipos.Count; i++)
+            {
+                if (listaEquipos[i].NombreClub == nombreClub && listaEquipos[i].Categoria == categoria)
+                {
+                    equiposFiltrados.Add(listaEquipos[i]);
+                    Console.WriteLine($"{equiposFiltrados.Count}. {listaEquipos[i].NombreCompleto}");
+                }
+            }
 
+            if (equiposFiltrados.Count == 0)
+            {
+                Console.WriteLine("No hay equipos disponibles para esta categoría.");
+                return "";
+            }
 
-        //auxiliar para elegir de clubes
-
+            int seleccion = SeleccionarOpcion(1, equiposFiltrados.Count);
+            return equiposFiltrados[seleccion - 1].NombreCompleto;
+        }
 
         //--------------------------------------
         //MENU PRINCIPAL

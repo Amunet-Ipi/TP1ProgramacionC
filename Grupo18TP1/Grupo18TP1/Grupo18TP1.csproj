@@ -4,10 +4,10 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{98B30F85-D203-4E54-8106-8C013BD8A99C}</ProjectGuid>
+    <ProjectGuid>{82E6F921-74EE-4745-92AF-DB8C65A1C3E6}</ProjectGuid>
     <OutputType>Exe</OutputType>
-    <RootNamespace>Solucion2</RootNamespace>
-    <AssemblyName>Solucion2</AssemblyName>
+    <RootNamespace>Grupo18TP1</RootNamespace>
+    <AssemblyName>Grupo18TP1</AssemblyName>
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>

@@ -1,17 +1,15 @@
-﻿//Grupo 18
-//Integrantes: Quinteros Ivana, Zapata Santiago y Bayer Jeremias
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Solucion2
+namespace Grupo18TP1
 {
     /*Definición de tipos
     Realizamos esta definición fuera del programa para separar visualmente 
     las definiciones de tipos de la lógica del programa*/
-    
+
     //Usamos enum para las categorias, ya que son fijas
     enum Categoria
     {
@@ -40,8 +38,8 @@ namespace Solucion2
         public bool Seguro;
         public bool Afiliacion;
     }
-    
-     
+
+
     internal class Program
     {
         //declaramos la lista generales donde tendremos agrupado clubes, equipos y jugadores de la liga
@@ -92,11 +90,11 @@ namespace Solucion2
                     nombreClub = listaClubes[opcion - 1];
                 }
             }
-           
+
             //Permito que seleccionen la categoria que a la que va a pertenecer
             Categoria categoria = SeleccionarCategoria();
 
-            //Genero el nombes
+            //Genero el nombre
             string nombreCompleto = GenerarNombreEquipo(nombreClub, categoria);
 
             //Creo el equipo y lo agrego a la lista
@@ -196,7 +194,7 @@ namespace Solucion2
             //-----------------
 
             int opcion = SeleccionarOpcion(1, 2);
-           
+
             //Si desea eliminar un jugador de un equipo
             if (opcion == 1)
             {
@@ -333,7 +331,7 @@ namespace Solucion2
                 Console.WriteLine($"- {cat}");
             }
 
-            
+
             // elegir club y equipo
             Console.WriteLine("\nSeleccione el Club al que pertenece");
             string nombreClub = ElegirClubExistente();
@@ -469,12 +467,12 @@ namespace Solucion2
             Console.WriteLine("1. Modificar Seguro");
             Console.WriteLine("2. Modificar Afiliacion");
             Console.WriteLine("3. Agregar equipo");
-            Console.WriteLine("4. Modificar Edad");  
+            Console.WriteLine("4. Modificar Edad");
             Console.WriteLine("-----------------");
             Console.WriteLine("0. Volver al menu principal");
 
-            int opcion = SeleccionarOpcion(0, 4);  
-           
+            int opcion = SeleccionarOpcion(0, 4);
+
             switch (opcion)
             {
                 case 1:
@@ -702,7 +700,7 @@ namespace Solucion2
             Console.Clear();
             Console.WriteLine("--- JUGADOR MÁS JOVEN ---");
 
-            if (!HayJugadores()) 
+            if (!HayJugadores())
                 return;
 
             int edadMin = ObtenerEdadMinima();
@@ -726,7 +724,7 @@ namespace Solucion2
             Console.Clear();
             Console.WriteLine("--- JUGADOR MÁS VIEJO ---");
 
-            if (!HayJugadores()) 
+            if (!HayJugadores())
                 return;
 
 
@@ -747,7 +745,7 @@ namespace Solucion2
         /// Muestra los jugadores de la liga que pueden pertenecer a cada categoria
         /// </summary>
         static void CantidadPorCategoria()
-        {  
+        {
             Console.Clear();
             Console.WriteLine("--- CANTIDAD DE JUGADORES POR CATEGORIA ---");
 
@@ -839,7 +837,7 @@ namespace Solucion2
                 input = Console.ReadLine().ToUpper();
 
                 if (input != "S" && input != "N")
-                Console.WriteLine("Error: ingrese S o N.");
+                    Console.WriteLine("Error: ingrese S o N.");
 
             } while (input != "S" && input != "N");
 
@@ -964,7 +962,7 @@ namespace Solucion2
         /// </summary>
         static void MostrarClubes()
         {
-            Console.WriteLine("\nClubes en sistema");
+            Console.WriteLine("\nClubes en sistema:");
             for (int i = 0; i < listaClubes.Count; i++)
             {
                 Console.WriteLine($"{i + 1}. {listaClubes[i]}");
@@ -1029,7 +1027,7 @@ namespace Solucion2
             for (int i = 0; i < listaEquipos.Count; i++)
             {
                 if (listaEquipos[i].NombreClub == nombreClub && listaEquipos[i].Categoria == categoria)
-                cantidadExistentes++;
+                    cantidadExistentes++;
             }
 
             char sufijo = (char)('A' + cantidadExistentes);
@@ -1044,11 +1042,12 @@ namespace Solucion2
         static string SeleccionarEquipoPorClub()
         {
             Console.WriteLine("Seleccione un club");
-            Console.WriteLine("Clubes en sistema:");
             MostrarClubes();
             int seleccionClub = SeleccionarOpcion(1, listaClubes.Count);
             string opcionClub = listaClubes[seleccionClub - 1];
 
+            Console.WriteLine("Seleccione un equipo");
+            Console.WriteLine("Equipos en sistema del club seleccionado:");
             List<Equipo> equiposDelClub = new List<Equipo>();
             for (int i = 0; i < listaEquipos.Count; i++)
             {
@@ -1075,8 +1074,8 @@ namespace Solucion2
                 if (listaJugadores[i].DNI == DNI)
                 {
                     listaJugadores[i].Equipos.Remove(nombreEquipo);
-                    break; 
-                } 
+                    break;
+                }
             }
         }
 
@@ -1452,4 +1451,4 @@ namespace Solucion2
     }
 }
 
-    
+

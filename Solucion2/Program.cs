@@ -1,4 +1,6 @@
-﻿using System;
+﻿//Grupo 18
+//Integrantes: Quinteros Ivana, Zapata Santiago y Bayer Jeremias
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -384,44 +386,13 @@ namespace Solucion2
 
             if (!HayJugadores()) return;
 
-            Console.WriteLine("¿Cómo desea buscar al jugador?");
-            Console.WriteLine("1. Buscar por DNI");
-            Console.WriteLine("2. Buscar por Apellido");
-            Console.WriteLine("0. Volver al menú principal");
-
-            int opcionBusqueda = SeleccionarOpcion(0, 2);
-            int indice = -1;
-
-            switch (opcionBusqueda)
+            int indice = BuscarJugador();
+            if (indice == -1)
             {
-                case 1:
-                    int dni = IngresarEntero("Ingrese DNI: ", 999999, 99999999);
-                    indice = BuscarJugadorPorDNI(dni);
-                    break;
-
-                case 2:
-                    string apellido = IngresarString("Ingrese el apellido: ");
-                    List<int> coincidencias = BuscarJugadorPorApellido(apellido);
-
-                    if (coincidencias.Count == 0)
-                        indice = -1;
-                    else if (coincidencias.Count == 1)
-                        indice = coincidencias[0];
-                    else
-                    {
-                        Console.WriteLine($"\nSe encontraron {coincidencias.Count} jugadores:");
-                        for (int i = 0; i < coincidencias.Count; i++)
-                        {
-                            Jugador j = listaJugadores[coincidencias[i]];
-                            Console.WriteLine($"{i + 1}. {j.Nombre} {j.Apellido} | DNI: {j.DNI}");
-                        }
-                        int seleccion = SeleccionarOpcion(1, coincidencias.Count);
-                        indice = coincidencias[seleccion - 1];
-                    }
-                    break;
-
-                case 0:
-                    return;
+                Console.WriteLine("\nJugador no encontrado.");
+                Console.WriteLine("\nPresione cualquier tecla para continuar...");
+                Console.ReadKey();
+                return;
             }
 
             if (indice == -1)
@@ -469,47 +440,8 @@ namespace Solucion2
             Console.WriteLine("--- MODIFICAR JUGADOR ---");
 
             if (!HayJugadores()) return;
-
-            Console.WriteLine("¿Cómo desea buscar al jugador?");
-            Console.WriteLine("1. Buscar por DNI");
-            Console.WriteLine("2. Buscar por Apellido");
-            Console.WriteLine("0. Volver al menú principal");
-
-            int opcionBusqueda = SeleccionarOpcion(0, 2);
-            int indice = -1;
-
-            switch (opcionBusqueda)
-            {
-                case 1:
-                    int dni = IngresarEntero("Ingrese DNI: ", 1, 99999999);
-                    indice = BuscarJugadorPorDNI(dni);
-                    break;
-
-                case 2:
-                    string apellido = IngresarString("Ingrese el apellido: ");
-                    List<int> coincidencias = BuscarJugadorPorApellido(apellido);
-
-                    if (coincidencias.Count == 0)
-                        indice = -1;
-                    else if (coincidencias.Count == 1)
-                        indice = coincidencias[0];
-                    else
-                    {
-                        Console.WriteLine($"\nSe encontraron {coincidencias.Count} jugadores:");
-                        for (int i = 0; i < coincidencias.Count; i++)
-                        {
-                            Jugador jugadorCoincidencia = listaJugadores[coincidencias[i]];
-                            Console.WriteLine($"{i + 1}. {jugadorCoincidencia.Nombre} {jugadorCoincidencia.Apellido} | DNI: {jugadorCoincidencia.DNI}");
-                        }
-                        int seleccion = SeleccionarOpcion(1, coincidencias.Count);
-                        indice = coincidencias[seleccion - 1];
-                    }
-                    break;
-
-                case 0:
-                    return;
-            }
-
+            //Buscar jugador por dni o apellido 
+            int indice = BuscarJugador();
             if (indice == -1)
             {
                 Console.WriteLine("\nJugador no encontrado.");
@@ -518,8 +450,11 @@ namespace Solucion2
                 return;
             }
 
+            //mostramos jugador entontrado y daots
             Jugador jugador = listaJugadores[indice];
             Console.WriteLine($"\nJugador encontrado: {jugador.Nombre} {jugador.Apellido} | Edad: {jugador.Edad}");
+            Console.WriteLine($"\nDNI: {jugador.DNI}");
+
             if (jugador.Seguro)
                 Console.WriteLine("Seguro: SI");
             else
@@ -529,6 +464,7 @@ namespace Solucion2
             else
                 Console.WriteLine("Afiliacion: NO");
 
+            //Damos opciones para modificar
             Console.WriteLine("\n¿Qué desea modificar?");
             Console.WriteLine("1. Modificar Seguro");
             Console.WriteLine("2. Modificar Afiliacion");
@@ -579,7 +515,9 @@ namespace Solucion2
         //
         //-------------------------------------------
         //JUGADORES ASEGURADOS
-
+        /// <summary>
+        /// Permite mostrar una lista de los jugadores asegurados
+        /// </summary>
         static void ListarAsegurados()
         {
             Console.Clear();
@@ -589,7 +527,7 @@ namespace Solucion2
             if (!HayJugadores()) return;
 
             // si hay filto los asegurados
-            //genero mi lista donde guardare los asegurados
+            //genero mi lista donde guardar los asegurados
             List<Jugador> asegurados = new List<Jugador>();
             //recorro lista de jugadores y me quedo con los asegurados
             for (int i = 0; i < listaJugadores.Count; i++)
@@ -620,6 +558,9 @@ namespace Solucion2
         }
 
         //JUGADORES POR EDAD
+        /// <summary>
+        /// Lista los jugadores por edad de forma creciente
+        /// </summary>
         static void ListarPorEdad()
         {
             Console.Clear();
@@ -658,6 +599,11 @@ namespace Solucion2
         }
 
         //JUGADORES POR CATEGORIA
+        //Entendemos que aca listamos segun la categoria a la que PUEDEN pertenecer por edad,
+        //No se muestran los jugadores que juegan en cada categoria, de querer realizarlo de esa forma debería modificarse
+        /// <summary>
+        /// Lista los jugadores que pueden pertenecer a cierta categoria por edad
+        /// </summary>
         static void ListarPorCategoria()
         {
             Console.Clear();
@@ -712,6 +658,9 @@ namespace Solucion2
         }
 
         //JUGADOR MAS VIEJO
+        /// <summary>
+        /// Muestra el jugador con mas edad de la liga
+        /// </summary>
         static void JugadorMasViejo()
         {
             Console.Clear();
@@ -734,6 +683,9 @@ namespace Solucion2
         }
 
         //CANTIDAD DE JUGADORES POR CATEGORIA
+        /// <summary>
+        /// Muestra los jugadores de la liga que pueden pertenecer a cada categoria
+        /// </summary>
         static void CantidadPorCategoria()
         {  
             Console.Clear();
@@ -751,6 +703,9 @@ namespace Solucion2
 
         }
         //PROMEDIO DE EDAD DE LA LIGA
+        /// <summary>
+        /// Muestra el promedio de edad de la liga
+        /// </summary>
         static void CalcularPromedioEdad()
         {
             Console.Clear();
@@ -771,6 +726,9 @@ namespace Solucion2
             Console.ReadKey();
         }
         //EQUIPOS INCOMPLETOS
+        /// <summary>
+        /// Muestra los equipos incompletos que hay en la liga
+        /// </summary>
         static void EquiposIncompletos()
         {
             Console.Clear();
@@ -906,6 +864,10 @@ namespace Solucion2
         }
 
         //Auxiliar comprobar si hay jugadores y equipo 
+        /// <summary>
+        /// Revisa si hay jugadores cargados
+        /// </summary>
+        /// <returns>verdadero si hay jugadores, falso si no hay jugadores</returns>
         static bool HayJugadores()
         {
             if (listaJugadores.Count == 0)
@@ -918,6 +880,11 @@ namespace Solucion2
             }
             return true;
         }
+
+        /// <summary>
+        /// Revisa si hay equipos cargados
+        /// </summary>
+        /// <returns>verdadero si hay equipos, falso si no hay equipos</returns>
         static bool HayEquipos()
         {
             if (listaEquipos.Count == 0)
@@ -1308,6 +1275,54 @@ namespace Solucion2
             return jugadoresFiltrados;
         }
 
+        /// <summary>
+        /// Permite buscar un jugador por DNI o apellido
+        /// </summary>
+        /// <returns>indice del jugador en lista de jugadores</returns>
+        static int BuscarJugador()
+        {
+            Console.WriteLine("¿Cómo desea buscar al jugador?");
+            Console.WriteLine("1. Buscar por DNI");
+            Console.WriteLine("2. Buscar por Apellido");
+            Console.WriteLine("0. Volver al menú principal");
+
+            int opcionBusqueda = SeleccionarOpcion(0, 2);
+            int indice = -1;
+
+            switch (opcionBusqueda)
+            {
+                case 1:
+                    int dni = IngresarEntero("Ingrese DNI: ", 1, 99999999);
+                    indice = BuscarJugadorPorDNI(dni);
+                    break;
+
+                case 2:
+                    string apellido = IngresarString("Ingrese el apellido: ");
+                    List<int> coincidencias = BuscarJugadorPorApellido(apellido);
+
+                    if (coincidencias.Count == 0)
+                        indice = -1;
+                    else if (coincidencias.Count == 1)
+                        indice = coincidencias[0];
+                    else
+                    {
+                        Console.WriteLine($"\nSe encontraron {coincidencias.Count} jugadores:");
+                        for (int i = 0; i < coincidencias.Count; i++)
+                        {
+                            Jugador jugador = listaJugadores[coincidencias[i]];
+                            Console.WriteLine($"{i + 1}. {jugador.Nombre} {jugador.Apellido} | DNI: {jugador.DNI}");
+                        }
+                        int seleccion = SeleccionarOpcion(1, coincidencias.Count);
+                        indice = coincidencias[seleccion - 1];
+                    }
+                    break;
+
+                case 0:
+                    return -1;
+            }
+
+            return indice;
+        }
         //--------------------------------------
         //MENU PRINCIPAL
         //--------------------------------------

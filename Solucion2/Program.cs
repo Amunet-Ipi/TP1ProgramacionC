@@ -68,13 +68,13 @@ namespace Solucion2
 
             if (listaClubes.Count == 0)
             {
-                // no hay clubes, debe ingresar uno nuevo
+                //Si no hay clubes aviso y permito que cargen un nuevo club
                 Console.WriteLine("No hay clubes registrados.");
                 nombreClub = IngresarNuevoClub();
             }
             else
             {
-                // hay clubes, mostrar y permitir elegir o agregar nuevo
+                //Si hay clubes, los mostramos y permitir elegir entre ello o agregar nuevo
                 Console.WriteLine("\nClubes disponibles:");
                 MostrarClubes();
                 Console.WriteLine("0. + INGRESAR UN CLUB NUEVO...");
@@ -90,16 +90,22 @@ namespace Solucion2
                     nombreClub = listaClubes[opcion - 1];
                 }
             }
+           
+            //Permito que seleccionen la categoria que a la que va a pertenecer
             Categoria categoria = SeleccionarCategoria();
+
+            //Genero el nombes
             string nombreCompleto = GenerarNombreEquipo(nombreClub, categoria);
 
+            //Creo el equipo y lo agrego a la lista
             Equipo nuevo;
             nuevo.NombreClub = nombreClub;
             nuevo.NombreCompleto = nombreCompleto;
             nuevo.Categoria = categoria;
             nuevo.CantidadJugadores = 0;
-
             listaEquipos.Add(nuevo);
+
+            //Muestro el equipo creado
             Console.WriteLine($"\nEquipo creado: {nombreCompleto}");
             Console.WriteLine("\nPresione cualquier tecla para continuar...");
             Console.ReadKey();
@@ -119,11 +125,13 @@ namespace Solucion2
             Console.Clear();
             Console.WriteLine("--- BAJA DE EQUIPO ---");
 
+            //Si no hay equipos aviso
             if (!HayEquipos()) return;
 
+            //permito que seleccionen el equipo, por el club
             string nombreEquipoElegido = SeleccionarEquipoPorClub();
 
-            //primer for para recorrer lista de equipos
+            //recorro lista de 
             for (int i = 0; i < listaEquipos.Count; i++)
             {
                 //busco el equipo con el nombre elegido
@@ -200,7 +208,7 @@ namespace Solucion2
                         //agregamos a la lista
                         jugadoresDelEquipo.Add(listaJugadores[i]);
                         //Mostramos los jugadores que encontramos
-                        Console.WriteLine($"{jugadoresDelEquipo.Count}. {listaJugadores[i].Nombre} {listaJugadores[i].Apellido}");
+                        Console.WriteLine($"{jugadoresDelEquipo.Count}. {listaJugadores[i].Nombre} {listaJugadores[i].Apellido} DNI: {listaJugadores[i].DNI}");
                     }
                 }
 
@@ -297,10 +305,11 @@ namespace Solucion2
             Console.Clear();
             Console.WriteLine("--- ALTA DE JUGADOR ---");
 
+            //Si no hay equipos doy aviso
             if (!HayEquipos()) return;
 
-                // ingreso y validacion de DNI
-                int dni = IngresarEntero("Ingrese DNI: ", 1, 99999999);
+            // ingreso y validacion de DNI
+            int dni = IngresarEntero("Ingrese DNI: ", 999999, 99999999);
             if (DNIExiste(dni))
             {
                 Console.WriteLine("Error: el DNI ya está registrado.");
@@ -314,7 +323,7 @@ namespace Solucion2
             string apellido = IngresarString("Ingrese Apellido: ");
             int edad = IngresarEntero("Ingrese Edad: ", 1, 99);
 
-            // obtener categorias por edad
+            // obtener y mostrar categorias por edad
             List<Categoria> categoriasJugador = ObtenerCategoriasPorEdad(edad);
             Console.WriteLine("Categorías correspondientes:");
             foreach (Categoria cat in categoriasJugador)
@@ -324,9 +333,10 @@ namespace Solucion2
 
             
             // elegir club y equipo
-
-            Console.WriteLine("\nSeleccione el club:");
+            Console.WriteLine("\nSeleccione el Club al que pertenece");
             string nombreClub = ElegirClubExistente();
+
+            Console.WriteLine("\nSeleccione el Equipo al que pertenece");
 
             string nombreEquipo = SeleccionarEquipoPorClubYCategoria(nombreClub, categoriasJugador);
             if (nombreEquipo == "")
@@ -385,7 +395,7 @@ namespace Solucion2
             switch (opcionBusqueda)
             {
                 case 1:
-                    int dni = IngresarEntero("Ingrese DNI: ", 1, 99999999);
+                    int dni = IngresarEntero("Ingrese DNI: ", 999999, 99999999);
                     indice = BuscarJugadorPorDNI(dni);
                     break;
 
@@ -460,24 +470,61 @@ namespace Solucion2
 
             if (!HayJugadores()) return;
 
-            int dni = IngresarEntero("Ingrese DNI: ", 1, 99999999);
-            int indice = BuscarJugadorPorDNI(dni);
+            Console.WriteLine("¿Cómo desea buscar al jugador?");
+            Console.WriteLine("1. Buscar por DNI");
+            Console.WriteLine("2. Buscar por Apellido");
+            Console.WriteLine("0. Volver al menú principal");
+
+            int opcionBusqueda = SeleccionarOpcion(0, 2);
+            int indice = -1;
+
+            switch (opcionBusqueda)
+            {
+                case 1:
+                    int dni = IngresarEntero("Ingrese DNI: ", 1, 99999999);
+                    indice = BuscarJugadorPorDNI(dni);
+                    break;
+
+                case 2:
+                    string apellido = IngresarString("Ingrese el apellido: ");
+                    List<int> coincidencias = BuscarJugadorPorApellido(apellido);
+
+                    if (coincidencias.Count == 0)
+                        indice = -1;
+                    else if (coincidencias.Count == 1)
+                        indice = coincidencias[0];
+                    else
+                    {
+                        Console.WriteLine($"\nSe encontraron {coincidencias.Count} jugadores:");
+                        for (int i = 0; i < coincidencias.Count; i++)
+                        {
+                            Jugador jugadorCoincidencia = listaJugadores[coincidencias[i]];
+                            Console.WriteLine($"{i + 1}. {jugadorCoincidencia.Nombre} {jugadorCoincidencia.Apellido} | DNI: {jugadorCoincidencia.DNI}");
+                        }
+                        int seleccion = SeleccionarOpcion(1, coincidencias.Count);
+                        indice = coincidencias[seleccion - 1];
+                    }
+                    break;
+
+                case 0:
+                    return;
+            }
 
             if (indice == -1)
             {
-                Console.WriteLine("Jugador no encontrado.");
+                Console.WriteLine("\nJugador no encontrado.");
                 Console.WriteLine("\nPresione cualquier tecla para continuar...");
                 Console.ReadKey();
                 return;
             }
 
-            Jugador j = listaJugadores[indice];
-            Console.WriteLine($"\nJugador encontrado: {j.Nombre} {j.Apellido} | Edad: {j.Edad}");
-            if (j.Seguro)
+            Jugador jugador = listaJugadores[indice];
+            Console.WriteLine($"\nJugador encontrado: {jugador.Nombre} {jugador.Apellido} | Edad: {jugador.Edad}");
+            if (jugador.Seguro)
                 Console.WriteLine("Seguro: SI");
             else
                 Console.WriteLine("Seguro: NO");
-            if (j.Afiliacion)
+            if (jugador.Afiliacion)
                 Console.WriteLine("Afiliacion: SI");
             else
                 Console.WriteLine("Afiliacion: NO");
@@ -494,22 +541,22 @@ namespace Solucion2
             switch (opcion)
             {
                 case 1:
-                    if (j.Seguro)
+                    if (jugador.Seguro)
                         Console.WriteLine("Seguro actual: SI");
                     else
                         Console.WriteLine("Seguro actual: NO");
-                    j.Seguro = Confirmar("¿Tiene seguro? (S/N): ");
-                    listaJugadores[indice] = j;
+                    jugador.Seguro = Confirmar("¿Tiene seguro? (S/N): ");
+                    listaJugadores[indice] = jugador;
                     Console.WriteLine("Seguro actualizado.");
                     break;
 
                 case 2:
-                    if (j.Afiliacion)
+                    if (jugador.Afiliacion)
                         Console.WriteLine("Afiliacion actual: SI");
                     else
                         Console.WriteLine("Afiliacion actual: NO");
-                    j.Afiliacion = Confirmar("¿Tiene afiliación? (S/N): ");
-                    listaJugadores[indice] = j;
+                    jugador.Afiliacion = Confirmar("¿Tiene afiliación? (S/N): ");
+                    listaJugadores[indice] = jugador;
                     Console.WriteLine("Afiliación actualizada.");
                     break;
 
@@ -890,6 +937,7 @@ namespace Solucion2
         /// </summary>
         static void MostrarClubes()
         {
+            Console.WriteLine("\nClubes en sistema");
             for (int i = 0; i < listaClubes.Count; i++)
             {
                 Console.WriteLine($"{i + 1}. {listaClubes[i]}");
@@ -968,6 +1016,8 @@ namespace Solucion2
         /// <returns>Equipo Seleccionado</returns>
         static string SeleccionarEquipoPorClub()
         {
+            Console.WriteLine("Seleccione un club");
+            Console.WriteLine("Clubes en sistema:");
             MostrarClubes();
             int seleccionClub = SeleccionarOpcion(1, listaClubes.Count);
             string opcionClub = listaClubes[seleccionClub - 1];
@@ -1101,6 +1151,7 @@ namespace Solucion2
         /// <returns>Nombre del equipo seleccionado, o cadena vacía si no hay equipos disponibles</returns>
         static string SeleccionarEquipoPorClubYCategoria(string nombreClub, List<Categoria> categorias)
         {
+            Console.WriteLine("\nEquipos en sistema:");
             List<Equipo> equiposFiltrados = new List<Equipo>();
             for (int i = 0; i < listaEquipos.Count; i++)
             {

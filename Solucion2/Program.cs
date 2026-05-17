@@ -469,11 +469,12 @@ namespace Solucion2
             Console.WriteLine("1. Modificar Seguro");
             Console.WriteLine("2. Modificar Afiliacion");
             Console.WriteLine("3. Agregar equipo");
+            Console.WriteLine("4. Modificar Edad");  
             Console.WriteLine("-----------------");
             Console.WriteLine("0. Volver al menu principal");
 
-            int opcion = SeleccionarOpcion(0, 3);
-
+            int opcion = SeleccionarOpcion(0, 4);  
+           
             switch (opcion)
             {
                 case 1:
@@ -498,6 +499,65 @@ namespace Solucion2
 
                 case 3:
                     AgregarEquipoAJugador(indice);
+                    break;
+                case 4:
+                    Console.WriteLine($"Edad actual: {jugador.Edad}");
+                    int nuevaEdad = IngresarEntero("Ingrese la nueva edad: ", 1, 99);
+
+                    // Categorías antes y después del cambio
+                    List<Categoria> categoriasAntes = ObtenerCategoriasPorEdad(jugador.Edad);
+                    List<Categoria> categoriasDespues = ObtenerCategoriasPorEdad(nuevaEdad);
+
+                    // Detectar equipos que ya no son válidos con la nueva edad
+                    List<string> equiposInvalidos = new List<string>();
+                    foreach (string nombreEq in jugador.Equipos)
+                    {
+                        // Buscar la categoría del equipo en la lista
+                        for (int i = 0; i < listaEquipos.Count; i++)
+                        {
+                            if (listaEquipos[i].NombreCompleto == nombreEq &&
+                                !categoriasDespues.Contains(listaEquipos[i].Categoria))
+                            {
+                                equiposInvalidos.Add(nombreEq);
+                                break;
+                            }
+                        }
+                    }
+
+                    // Advertir si algún equipo quedará inválido
+                    if (equiposInvalidos.Count > 0)
+                    {
+                        Console.WriteLine("\nATENCIÓN: con la nueva edad, el jugador ya no");
+                        Console.WriteLine("cumple los requisitos de los siguientes equipos:");
+                        foreach (string eq in equiposInvalidos)
+                            Console.WriteLine($"  - {eq}");
+
+                        Console.WriteLine("Estos equipos serán quitados al jugador.");
+
+                        if (Confirmar("¿Confirma el cambio de edad? S/N"))
+                        {
+                            // Quitar los equipos inválidos
+                            foreach (string eq in equiposInvalidos)
+                            {
+                                QuitarEquipoDeJugador(jugador.DNI, eq);
+                                DecrementarJugadoresEquipo(eq);
+                            }
+                            jugador.Edad = nuevaEdad;
+                            listaJugadores[indice] = jugador;
+                            Console.WriteLine("Edad actualizada y equipos inválidos removidos.");
+                        }
+                        else
+                        {
+                            Console.WriteLine("Modificación cancelada.");
+                        }
+                    }
+                    else
+                    {
+                        // No hay equipos afectados, actualizar directo
+                        jugador.Edad = nuevaEdad;
+                        listaJugadores[indice] = jugador;
+                        Console.WriteLine("Edad actualizada correctamente.");
+                    }
                     break;
 
                 case 0:
